@@ -75,6 +75,148 @@ Sub check_GatherMana
 
 		
 		
+|------------------CoH Me / Group / All(netbots)------------------------|
+
+#event cohme "#1# tells you, 'cohme'"
+#event cohgroup "#1# tells you, 'cohgroup'"
+#event cohall "#1# tells you, 'cohall'"
+		
+
+		
+sub Event_cohme(string line, string ChatSender)
+	
+|-Verify the event
+		/call verifyEvent "${ChatSender}" "${line}"
+		/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
+		|    |-----------Valid User----------|
+		/if (!${Bool[${Macro.Return.Arg[2,_]}]}) {
+
+			/call IniToVar "${genSettings_Ini},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
+			
+			| If the user is not valid, check allow_BuffRequests
+			/if (${Macro.Return}) {
+		
+				| If allow_BuffRequests=TRUE, check restricked PCs
+				/if (!${Select[${ChatSender},${Ini[${Macro_Ini},Buff Requests,Restricted PCs]}]}) /goto :allowAccess
+			}
+		} else  { 
+		
+			:allowAccess
+	
+			 /if (${Me.Combat}) { 
+				/tell ${ChatSender} I'm in Combat please try again in a few !
+				/return
+			} else /if (!${Me.Combat}) { 
+			
+				/if (!${SpawnCount[pc ${ChatSender}]}) {
+					/tell ${ChatSender} Your not in my Zone.
+					/Return
+				} else /if (${Me.Class.ShortName.Equal[MAG]}) {
+					/tell ${ChatSender} Call of Hero is Incoming...Please Standby.
+					/call e3_Cast ${Spawn[${ChatSender}].ID} "Call of the Hero"		
+				} else /if ( !${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Arion, Skull of the Ancient]} && ${FindItem[Arion, Skull of the Ancient].Timer}==0) ) {
+					/tell ${ChatSender} Call of Hero is Incoming...Please Standby.
+					/call e3_Cast ${Spawn[${ChatSender}].ID} "Arion, Skull of the Ancient"
+				} else /if ( !${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Orb of the Crimson Bull]} && ${FindItem[Orb of the Crimson Bull].Timer}==0) ) {
+					/tell ${ChatSender} Call of Hero is Incoming...Please Standby.
+					/call e3_Cast ${Spawn[${ChatSender}].ID} "Orb of the Crimson Bull"
+				} else /if (!${Me.Class.ShortName.Equal[MAG]} && !${FindItemCount[Arion, Skull of the Ancient]} && !${FindItemCount[Orb of the Crimson Bull]}) {
+					/tell ${ChatSender} Sorry I am not capable of casting Call of the Hero.
+				}
+			}	
+		}
+/return
+		
+
+
+		
+		
+		
+sub Event_cohall(string line, string ChatSender)
+
+
+sub Event_cohall(string line, string ChatSender)
+
+
+| -Verify the event
+		/call verifyEvent "${ChatSender}" "${line}"
+		/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
+		|    |-----------Valid User----------|
+		/if (!${Bool[${Macro.Return.Arg[2,_]}]}) {
+
+			/call IniToVar "${genSettings_Ini},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
+			
+			| If the user is not valid, check allow_BuffRequests
+			/if (${Macro.Return}) {
+		
+				| If allow_BuffRequests=TRUE, check restricked PCs
+				/if (!${Select[${ChatSender},${Ini[${Macro_Ini},Buff Requests,Restricted PCs]}]}) /goto :allowAccess
+			}
+		} else {
+		
+			:allowAccess
+			
+			/if (${Me.Combat}) {
+				/tell ${ChatSender} I'm in Combat please try again in a few !	
+				/return
+				
+			} else /if (!${Me.Class.ShortName.Equal[MAG]} && !${FindItemCount[Arion, Skull of the Ancient]} && !${FindItemCount[Orb of the Crimson Bull]}) {
+				/tell ${ChatSender} Sorry I am not capable of casting Call of the Hero!	
+				/return
+			
+			} else /if (!${Me.Combat}) { 
+			
+				/declare i int local
+			
+				/for i 1 to ${NetBots.Counts}
+				
+					/if (!${SpawnCount[pc ${NetBots.Client[${i}]}]}) { 
+						/docommand ${ChatToggle} (${NetBots.Client[${i}]}) is not in zone!
+						
+						
+					} else /if (${NetBots[${NetBots.Client[${i}]}].Zone} && ${Spawn[pc ${NetBots.Client[${i}]}].Distance} < 20)  {
+						/docommand ${ChatToggle} (${NetBots.Client[${i}]}) is already here!
+				
+					} else /if (${NetBots[${NetBots.Client[${i}]}].Zone} && ${Spawn[pc ${NetBots.Client[${i}]}].Distance} > 20)  {
+						
+						
+						/if (${Me.Class.ShortName.Equal[MAG]}) { 		 
+							/docommand ${ChatToggle} Call of Hero is Incoming on (${NetBots.Client[${i}]})!
+							/call e3_Cast ${NetBots[${NetBots.Client[${i}]}].ID} "Call of the Hero"	
+							/delay 5s
+					
+						} else /if ( !${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Ino's Lost Trinket]} && ${FindItem[Ino's Lost Trinket].Timer}==0)  {			
+							/docommand ${ChatToggle} Call of Hero is Incoming on (${NetBots.Client[${i}]})!
+							/call e3_Cast ${NetBots[${NetBots.Client[${i}]}].ID} "Ino's Lost Trinket"	
+							/delay 7s
+					
+						} else /if ( !${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Arion, Skull of the Ancient]} && ${FindItem[Arion, Skull of the Ancient].Timer}==0)  {
+							/docommand ${ChatToggle} Call of Hero is Incoming on (${NetBots.Client[${i}]})!
+							/call e3_Cast ${NetBots[${NetBots.Client[${i}]}].ID} "Arion, Skull of the Ancient"	
+							/delay 7s
+					
+						} else /if ( !${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Orb of the Crimson Bull]} && ${FindItem[Orb of the Crimson Bull].Timer}==0)  {
+							/docommand ${ChatToggle} Call of Hero is Incoming on (${NetBots.Client[${i}]})!
+							/call e3_Cast ${NetBots[${NetBots.Client[${i}]}].ID} "Orb of the Crimson Bull"
+							/delay 13s		
+						}	
+
+					}
+				
+				/next i
+				
+			}
+			/docommand ${ChatToggle} I'm done CoHing all Netbots in Zone!
+		}
+	
+/return
+		
+		
+		
+		
+		
+		
+		
 |-- Xeru the Arbiter --|
 
 #event Xeru "<#1#>Xeru deathtouch"
@@ -98,6 +240,7 @@ Sub event_Xeru
 Sub Thf_Setup
 /if (${Debug}) /echo |- Thf_Setup ==>
 	
+	/call INItoVar "${Character_Ini},THF,Auto-HealBot (On/Off)" autohealbot bool outer	
 	
 	
 /if (${Debug}) /echo <== Thf_Setup -|
@@ -116,6 +259,7 @@ Sub thf_Aliases
 
 	/squelch /alias /thfgate /bc thfgate
 	/squelch /alias /valegate /bc valegate
+	/squelch /alias /healbot /bc healbot
 	/squelch /alias /xeru /bc Xeru deathtouch
 
 
@@ -126,7 +270,7 @@ SUB THF_CharacterSettings
 /if (${Debug}) /echo |- THF_CharacterSettings ==>
 
 	
-	
+	/call WriteToIni "${Character_Ini},THF,Auto-HealBot (On/Off)"
 
 
 /if (${Debug}) /echo <== THF_CharacterSettings -|
