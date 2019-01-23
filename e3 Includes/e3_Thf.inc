@@ -240,7 +240,7 @@ Sub event_Xeru
 Sub Thf_Setup
 /if (${Debug}) /echo |- Thf_Setup ==>
 	
-	/call INItoVar "${Character_Ini},THF,Auto-HealBot (On/Off)" autohealbot bool outer	
+
 	
 	
 /if (${Debug}) /echo <== Thf_Setup -|
@@ -259,7 +259,6 @@ Sub thf_Aliases
 
 	/squelch /alias /thfgate /bc thfgate
 	/squelch /alias /valegate /bc valegate
-	/squelch /alias /healbot /bc healbot
 	/squelch /alias /xeru /bc Xeru deathtouch
 
 
@@ -270,7 +269,7 @@ SUB THF_CharacterSettings
 /if (${Debug}) /echo |- THF_CharacterSettings ==>
 
 	
-	/call WriteToIni "${Character_Ini},THF,Auto-HealBot (On/Off)"
+
 
 
 /if (${Debug}) /echo <== THF_CharacterSettings -|
