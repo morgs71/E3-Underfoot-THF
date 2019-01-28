@@ -13,20 +13,20 @@
 #event thfgate "#1# tells you, 'thfgate'"
 sub Event_thfgate
 	 
-		/if (${FindItem[=Charm of Queen Adrianne].ID}) {
-				/call e3_Cast ${Me.ID} "Charm of Queen Adrianne"
-			} else /if (${FindItem[=Advanced Charm of Queen Adrianne].ID}) {
-				/call e3_Cast ${Me.ID} "Advanced Charm of Queen Adrianne" 
-			} else /if (${FindItem[=Magical Charm of Queen Adrianne].ID}) {
-				/call e3_Cast ${Me.ID} "Magical Charm of Queen Adrianne" 
-			} else /if (${FindItem[=Advanced Magical Charm of Queen Adrianne].ID}) {
-				/call e3_Cast ${Me.ID} "Advanced Magical Charm of Queen Adrianne" 
-			} else /if (${FindItem[=Superior Magical Charm of Queen Adrianne].ID}) {
-				/call e3_Cast ${Me.ID} "Superior Magical Charm of Queen Adrianne" 
-			} else /if (${FindItem[=Exceptional Charm of Queen Adrianne].ID}) {
-				/call e3_Cast ${Me.ID} "Exceptional Charm of Queen Adrianne" 
-			} else /if (${FindItem[=Exquisite Charm of Queen Adrianne].ID}) {
-				/call e3_Cast ${Me.ID} "Exquisite Charm of Queen Adrianne" 
+		/if (${FindItem[=Charm of Queen Adrianne].ID})  {
+			/call e3_Cast ${Me.ID} "Charm of Queen Adrianne"
+		} else /if (${FindItem[=Advanced Charm of Queen Adrianne].ID})  {
+			/call e3_Cast ${Me.ID} "Advanced Charm of Queen Adrianne" 
+		} else /if (${FindItem[=Magical Charm of Queen Adrianne].ID})  {
+			/call e3_Cast ${Me.ID} "Magical Charm of Queen Adrianne" 
+		} else /if (${FindItem[=Advanced Magical Charm of Queen Adrianne].ID})  {
+			/call e3_Cast ${Me.ID} "Advanced Magical Charm of Queen Adrianne" 
+		} else /if (${FindItem[=Superior Magical Charm of Queen Adrianne].ID})  {
+			/call e3_Cast ${Me.ID} "Superior Magical Charm of Queen Adrianne" 
+		} else /if (${FindItem[=Exceptional Charm of Queen Adrianne].ID})  {
+			/call e3_Cast ${Me.ID} "Exceptional Charm of Queen Adrianne" 
+		} else /if (${FindItem[=Exquisite Charm of Queen Adrianne].ID})  {
+			/call e3_Cast ${Me.ID} "Exquisite Charm of Queen Adrianne" 
 		}
 	
 /return
@@ -40,8 +40,8 @@ sub Event_thfgate
 sub Event_valegate
 	 
 		
-/if (${FindItem[=Token of the Vale].ID}) {
-				/call e3_Cast ${Me.ID} "Token of the Vale"
+/if (${FindItem[=Token of the Vale].ID})  {
+	/call e3_Cast ${Me.ID} "Token of the Vale"
 }
 	
 /return
@@ -52,20 +52,20 @@ sub Event_valegate
 
 Sub check_GatherMana
 
-/if (${Me.PctMana} < 60 && ${Me.PctHPs} > 35) {
-	/if (${Me.Combat} && ${Select[${Me.Class.ShortName},BST,PAL,RNG,SHD]}) {
+/if (${Me.PctMana} < 60 && ${Me.PctHPs} > 35)  {
+	/if (${Me.Combat} && ${Select[${Me.Class.ShortName},BST,PAL,RNG,SHD]})  {
 		/return	
-	} else /if (${Me.PctMana} < 20 && ${FindItemCount[Fire Crystal Wristguard]} && ${FindItem[Fire Crystal Wristguard].Timer}==0) {
+	} else /if (${Me.PctMana} < 20 && ${FindItemCount[Fire Crystal Wristguard]} && ${FindItem[Fire Crystal Wristguard].Timer}==0)  {
 		/call e3_Cast 0 "Fire Crystal Wristguard" 
-	} else /if (${Me.PctMana} < 30 && ${FindItemCount[Powerful Silk Slippers]} && ${FindItem[Powerful Silk Slippers].Timer}==0) {
+	} else /if (${Me.PctMana} < 30 && ${FindItemCount[Powerful Silk Slippers]} && ${FindItem[Powerful Silk Slippers].Timer}==0)  {
 		/call e3_Cast 0 "Powerful Silk Slippers" 
-	} else /if (${Me.PctMana} < 40 && ${FindItemCount[Silver Chains]} && ${FindItem[Silver Chains].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]}) {
+	} else /if (${Me.PctMana} < 35 && ${FindItemCount[Silver Chains]} && ${FindItem[Silver Chains].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]})  {
 		/call e3_Cast 0 "Silver Chains" 
-	} else /if (${Me.PctMana} < 40 && ${FindItemCount[Orb of Spirits]} && ${FindItem[Orb of Spirits].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]}) {
+	} else /if (${Me.PctMana} < 40 && ${FindItemCount[Orb of Spirits]} && ${FindItem[Orb of Spirits].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]})  {
 		/call e3_Cast 0 "Orb of Spirits" 
-	} else /if (${Me.PctMana} <  && ${FindItemCount[Tears of Frozen Mana]} && ${FindItem[Tears of Frozen Mana].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]}) {
+	} else /if (${Me.PctMana} < 50 && ${FindItemCount[Tears of Frozen Mana]} && ${FindItem[Tears of Frozen Mana].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]})  {
 		/call e3_Cast 0 "Tears of Frozen Mana" 
-	} else /if (${Me.PctMana} <  && ${FindItemCount[Tears of Frozen Spirits]} && ${FindItem[Tears of Frozen Spirits].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]}) {
+	} else /if (${Me.PctMana} < 50 && ${FindItemCount[Tears of Frozen Spirits]} && ${FindItem[Tears of Frozen Spirits].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]})  {
 		/call e3_Cast 0 "Tears of Frozen Spirits" 
 	}
 }	
@@ -75,13 +75,22 @@ Sub check_GatherMana
 
 		
 		
-|------------------CoH Me / Group / All(netbots)------------------------|
+| -------------------------------------------------------------------------------------------------------|
+| -- Call of the Hero: Single Target, Group, All (Netbots)          Written by Muergan                  -|
+|========================================================================================================|
+| -- Single Target - Tell bot:   cohme		(Pulls sender of tell to bot recieving command)				-|
+| -- Group - Tell bot:   cohgroup			(Pulls Group to bot that recieved command)					-|
+| -- CoH all Netbots - Tell bot:   cohall	(Pulls all Netbots to bot that recieved command				-|
+| -------------------------------------------------------------------------------------------------------|
 
 #event cohme "#1# tells you, 'cohme'"
 #event cohgroup "#1# tells you, 'cohgroup'"
 #event cohall "#1# tells you, 'cohall'"
 		
 
+		
+|-- CoH Me Event --|		
+		
 		
 sub Event_cohme(string line, string ChatSender)
 	
@@ -130,9 +139,9 @@ sub Event_cohme(string line, string ChatSender)
 
 
 		
+|-- CoH All Event -- |		
 		
-		
-sub Event_cohall(string line, string ChatSender)
+
 
 
 sub Event_cohall(string line, string ChatSender)
@@ -213,28 +222,106 @@ sub Event_cohall(string line, string ChatSender)
 		
 		
 		
-		
-		
-		
-		
-|-- Xeru the Arbiter --|
+| -------------------------------------------------------------------------------------------------------|
+| -- Attendance: Bot Roll Call        use: /attendance      Written by Smaht        Edited by: Muergan  -|
+| -------------------------------------------------------------------------------------------------------|
 
-#event Xeru "<#1#>Xeru deathtouch"
+#EVENT attendance "<#1#> attendance"
 
-Sub event_Xeru
+SUB EVENT_attendance(line, ChatSender)
 
-/target Xeru
-/pause 2s
-/if (${Target.ID} == 1002841 && ${Target.Distance} <= 15) {	
-	/if (${FindItem[=Chains of Reflection].ID} && ${FindItem[=Chains of Reflection].Timer}==0) {
-		/call e3_Cast ${Target.ID} "Chains of Reflection"
+| ---------------- If I made the attendance call, continue, otherwise exit
+/if (${Me.CleanName.Equal[${ChatSender}]}) {
+
+	/declare e3xUtilitiesDebug bool local FALSE
+	/declare shortDistList string local
+	/declare medDistList string local
+	/declare feetwetList string local
+	/declare drowningList string local
+	/declare outOfZoneList string local
+
+	| ---------------- Distances against which to check
+	/declare shortDistance int local 50
+	/declare medDistance int local 85
+
+	/declare i int local
+
+	| ---------------- Set targetlist to the NetBots.Client list
+	/for i 1 to ${NetBots.Counts}
+
+    	| ---------------- For any NetBots.Client, if InZone and (Distance3D > shortDistance) and !Me add to shortDistList
+		/if (${NetBots[${NetBots.Client.Arg[${i}]}].InZone} && (${Spawn[${NetBots.Client.Arg[${i}]}].Distance3D} > ${shortDistance}) && !${NetBots.Client.Arg[${i}].Equal[${Me.Name}]}) /varset shortDistList ${shortDistList} ${NetBots.Client.Arg[${i}]}
+
+		| ---------------- For any NetBots.Client, if !InZone add to outOfZoneList
+		/if (!${NetBots[${NetBots.Client.Arg[${i}]}].InZone}) /varset outOfZoneList ${outOfZoneList} ${NetBots.Client.Arg[${i}]}
+
+		| ---------------- Debug info
+		/if (${Debug_Thf} || ${Debug}) {
+			/echo shortdistList : ${NetBots.Client.Arg[${i}]} : ${Spawn[${NetBots.Client.Arg[${i}]}].Distance3D} : InZone=${NetBots[${NetBots.Client.Arg[${i}]}].InZone}
+			/echo Current list for shortDistList is: ${shortDistList}
+    		/echo outOfZoneList : ${NetBots.Client.Arg[${i}]} : InZone=${NetBots[${NetBots.Client.Arg[${i}]}].InZone}
+			/echo Current list for outOfZoneList is: ${outOfZoneList}
 		}
-} else /if (${Target.ID} == 1002922 && ${Target.Distance} <= 15) {
-	/if (${FindItem[=Chains of Reflection].ID} && ${FindItem[=Chains of Reflection].Timer}==0) {
-		/call e3_Cast ${Target.ID} "Chains of Reflection"
-		}		
+
+        /next i
+
+    | ---------------- Report outOfZoneList
+    /if (${outOfZoneList.Length}) /bc [+r+] Out of Zone: ${outOfZoneList}
+
+	| ---------------- If no one in the list, report everyone present and goto underwater checks
+	/if (!${shortDistList.Length}) /multiline ; /bc [+r+] Everyone present.;/goto :underwater
+
+	| ---------------- Debug info
+	/if (${Debug_Thf} || ${Debug}) /echo shortdistList length is ${Math.Calc[${shortDistList.Count[ ]} + 1]}
+
+	/varset i 1
+    /for i 1 to ${Math.Calc[${shortDistList.Count[ ]} + 1]}
+
+		| ---------------- For any shortDistList member, if (Distance3D > medDistance) add to medDistList
+		/if (${Spawn[${shortDistList.Arg[${i}]}].Distance3D} > ${medDistance} || !${Spawn[${shortDistList.Arg[${i}]}].LineOfSight}) /varset medDistList ${medDistList} ${shortDistList.Arg[${i}]}
+
+		| ---------------- Debug info
+		/if (${Debug_Thf} || ${Debug}) {
+			/echo medDistList : ${shortDistList.Arg[${i}]} : ${Spawn[${shortDistList.Arg[${i}]}].Distance3D}
+			/echo Current list for medDistList is: ${medDistList}
+		}
+
+		/next i
+
+	| ---------------- Report shortDistList members and medDistList members if they exist
+	/if (!${medDistList.Length}) /bc The following are close but not present: ${shortDistList}
+	/if (${medDistList.Length}) /bc The following are Lost or Stuck: ${medDistList}
+
+	:underwater
+
+	| ---------------- If I am feetwet skip, otherwise figure out who is in the water
+	/if (!${Me.FeetWet}) {
+
+		/varset i 1
+    	/for i 1 to ${NetBots.Counts}
+
+    		/if (${Spawn[${NetBots.Client.Arg[${i}]}].FeetWet}) /varset feetwetList ${feetwetList} ${NetBots.Client.Arg[${i}]}
+
+    		| ---------------- Debug info
+			/if (${Debug_Thf} || ${Debug}) {
+				/echo FeetWet: ${NetBots.Client.Arg[${i}]} : ${Spawn[${NetBots.Client.Arg[${i}]}].FeetWet}
+				/echo Current list for feetwetList is: ${feetwetList}
+			}
+
+			/next i
+
+		/if (${feetwetList.Length}) /bc [+r+] The following are in the drink! ${feetwetList}
 	}
-/return	
+
+}
+
+/return
+
+
+
+		
+		
+		
 	
 
 Sub Thf_Setup
@@ -260,7 +347,7 @@ Sub thf_Aliases
 	/squelch /alias /thfgate /bc thfgate
 	/squelch /alias /valegate /bc valegate
 	/squelch /alias /xeru /bc Xeru deathtouch
-
+	/squelch /alias /attendance /bc attendance
 
 /if (${Debug} || ${Debug_Thf}) /echo <== thf_Aliases -|
 /return
