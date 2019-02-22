@@ -1,6 +1,6 @@
 |------------------------------------------------------------------------|
 |- e3_Macro_Pets.inc v3.0 ( originally designed to work with e3.mac )	-|
-|- Written by Killians of PEQ											-|
+|- Written by Killians of PEQ			Edited by Muergan			    -|
 |------------------------------------------------------------------------|
 |- Contains pet related functions for e3.mac							-|
 |------------------------------------------------------------------------|
@@ -13,13 +13,49 @@
 |----------------------------------------------------------------------------|
 |- Checks your pets status. Automatically, resummons, buffs, and shrinks.	-|
 |----------------------------------------------------------------------------|
+
+
+#EVENT toggle_PetAutoSummon "[#1#] Toggle Pets #2#"
+#EVENT toggle_PetAutoSummon "<#1#> Toggle Pets #2#"
+
+SUB EVENT_toggle_PetAutoSummon(line, ChatSender, eventParams)
+/if (${Debug} || ${Debug_Pets}) /echo |- EVENT_toggle_PetAutoSummon ==>
+
+	| -Verify the event
+	/call verifyEvent "${ChatSender}" "${line}"
+	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
+	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
+	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
+		
+		/if (${Defined[PetAutoSummon]})  {
+		
+			/declare PetAutoSummon_Set string local ${eventParams.Arg[1, ]}
+		
+			/if (${PetAutoSummon_Set.Find[On]})  {
+				/varset PetAutoSummon On
+				/echo Pet Auto Summoning is now [${PetAutoSummon}]
+			} else /if (${PetAutoSummon_Set.Find[Off]})  {
+				/varset PetAutoSummon Off
+				/echo Pet Auto Summoning is now [${PetAutoSummon}]
+			}
+
+		
+		}
+	}
+	
+/if (${Debug} || ${Debug_Pets}) /echo <== EVENT_toggle_PetAutoSummon -|
+/RETURN
+
+
+
 SUB check_Pets
 /if (${Debug} || ${Debug_Pets}) /echo |- check_PetStatus ==>
 
 	/if (${Pets} && !${suspend_Pets} && !${combatTimer} && !${activeTimer}) {
 	
 		| Check if you have a pet.
-		/if (!${Me.Pet.ID}) /call summonPet
+		/if (!${Me.Pet.ID}  && ${Select[${Me.Class.ShortName},BST,MAG,DRU,SHD,SHM,NEC]}) /call summonPet
+		/if (!${Me.Pet.ID}  && ${PetAutoSummon.Equal[On]}  && ${Select[${Me.Class.ShortName},PAL,RNG,CLR,ENC,WIZ,BER,ROG,MNK,BRD,WAR]}) /call summonPet
 		/if (!${ActionTaken} && ${Me.Pet.ID}) {
 		
 			| Maintain pet buffs.
@@ -240,6 +276,7 @@ Sub pet_Setup
 /if (${Debug} || ${Debug_Pets}) /echo |- pet_Setup ==>
 
 	/if (${Ini[${Character_Ini},Pets].Length}) {
+		/if (${Ini[${Character_Ini},Pets,Auto-Summon(On/Off)].Length}) /call INItoVar "${Character_Ini},Pets,Auto-Summon(On/Off)" PetAutoSummon string outer
 		/if (${Ini[${Character_Ini},Pets,Pet Spell].Length}) /call INItoVar "${Character_Ini},Pets,Pet Spell" petSpell string outer
 		/if (${Ini[${Character_Ini},Pets,Pet Taunt (On/Off)].Length}) /call INItoVar "${Character_Ini},Pets,Pet Taunt (On/Off)" petTaunt bool outer
 		/if (${Defined[petSpell]}) {
@@ -291,6 +328,14 @@ SUB pet_CharacterSettings
 		/call WriteToIni "${Character_Ini},Pets,Pet Mend (Pct)"
 		/call WriteToIni "${Character_Ini},Pets,Pet Buff#1"
 	}
+	/if (${Select[${Me.Class.ShortName},PAL,RNG,CLR,ENC,WIZ,BER,ROG,MNK,BRD,WAR]}) {
+		/call WriteToIni "${Character_Ini},Pets,Auto-Summon(On/Off)"
+		/call WriteToIni "${Character_Ini},Pets,Pet Spell"
+		/call WriteToIni "${Character_Ini},Pets,Pet Taunt (On/Off)"
+		/call WriteToIni "${Character_Ini},Pets,Pet Heal"
+		/call WriteToIni "${Character_Ini},Pets,Pet Mend (Pct)"
+		/call WriteToIni "${Character_Ini},Pets,Pet Buff#1"
+	}
 
 /if (${Debug} || ${Debug_Pets}) /echo <== pet_CharacterSettings -|
 /RETURN
@@ -305,6 +350,9 @@ Sub pet_Aliases
 	/squelch /alias /ReturnPets /bc Return Pets
 	/squelch /alias /RetPets /bc Return Pets
 	/squelch /alias /ShrinkPets /bc Shrink Pets
+	/squelch /alias /petson /bc Toggle Pets On
+	/squelch /alias /petsoff /bc Toggle Pets Off
+
 
 /if (${Debug} || ${Debug_Pets}) /echo <== pet_Aliases -|
 /return
