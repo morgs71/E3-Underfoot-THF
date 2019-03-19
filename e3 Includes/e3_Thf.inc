@@ -120,16 +120,16 @@ sub Event_cohme(string line, string ChatSender)
 				/if (!${SpawnCount[pc ${ChatSender}]}) {
 					/tell ${ChatSender} Your not in my Zone.
 					/Return
-				} else /if (${Me.Class.ShortName.Equal[MAG]}) {
+				} else /if (${Me.Class.ShortName.Equal[MAG]})  {
 					/tell ${ChatSender} Call of Hero is Incoming...Please Standby.
 					/call e3_Cast ${Spawn[${ChatSender}].ID} "Call of the Hero"		
-				} else /if ( !${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Arion, Skull of the Ancient]} && ${FindItem[Arion, Skull of the Ancient].Timer}==0) ) {
+				} else /if ( !${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Arion, Skull of the Ancient]} && ${FindItem[Arion, Skull of the Ancient].Timer}==0)  {
 					/tell ${ChatSender} Call of Hero is Incoming...Please Standby.
 					/call e3_Cast ${Spawn[${ChatSender}].ID} "Arion, Skull of the Ancient"
-				} else /if ( !${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Orb of the Crimson Bull]} && ${FindItem[Orb of the Crimson Bull].Timer}==0) ) {
+				} else /if ( !${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Orb of the Crimson Bull]} && ${FindItem[Orb of the Crimson Bull].Timer}==0)  {
 					/tell ${ChatSender} Call of Hero is Incoming...Please Standby.
 					/call e3_Cast ${Spawn[${ChatSender}].ID} "Orb of the Crimson Bull"
-				} else /if (!${Me.Class.ShortName.Equal[MAG]} && !${FindItemCount[Arion, Skull of the Ancient]} && !${FindItemCount[Orb of the Crimson Bull]}) {
+				} else /if (!${Me.Class.ShortName.Equal[MAG]} && !${FindItemCount[Arion, Skull of the Ancient]} && !${FindItemCount[Orb of the Crimson Bull]})  {
 					/tell ${ChatSender} Sorry I am not capable of casting Call of the Hero.
 				}
 			}	
