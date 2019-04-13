@@ -1,6 +1,6 @@
 |------------------------------------------------------------------------|
 |- e3_Macro_Background.inc	( originally designed to work with e3.mac )	-|
-|- Written by Killians of PEQ											-|
+|- Written by Killians of PEQ		Edited by Muergan					-|
 |------------------------------------------------------------------------|
 |- Contains background functions that update e3 status and variables,	-|
 |- along with many minimally invasive macro functions.					-|
@@ -36,6 +36,10 @@ SUB check_Zone
 	
 	| Check Auto-Melody
 	/if (${Defined[autoMelody]} && !${songSet.Length}) /playmelody ${autoMelody} /only|Me
+	
+	
+	| Reset Variables
+	/varset RallosZek False
 
 /if (${Debug} || ${Debug_Background}) /echo <== check_Zone -|
 /RETURN

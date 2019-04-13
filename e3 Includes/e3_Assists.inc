@@ -738,7 +738,11 @@ Sub Attempt_Backstab
 SUB check_Nukes
 /if (${Debug} || ${Debug_Assists}) /echo |- check_Nukes ==>
 
-	/if (${MyNukes.Size} && ${Assisting} && ${use_Nukes}) {
+
+	/if	(${RallosZek} && ${FindItem[Blue Rod of Zek].Timer}==0 && ${Assisting})  {
+		/call e3_Cast ${AssistTarget} "Blue Rod of Zek"
+		/popup Rallos Zek Bane Damage is Engaged!
+	} else /if (${MyNukes.Size} && ${Assisting} && ${use_Nukes}) {
 		
 		/if (${delayTimer_MyNukes}) {
 			/if (${Debug} || ${Debug_Assists}) /echo Waiting [${delayTimer_MyNukes}] to cast next nuke.
@@ -776,6 +780,7 @@ SUB check_Nukes
 				}
 			}
 		}
+			
 	}
 
 /if (${Debug} || ${Debug_Assists}) /echo <== check_Nukes -|
@@ -1558,7 +1563,7 @@ Sub assist_Setup
 	/declare AutoAggro bool outer TRUE
 	/declare longTerm_recastBuffer int outer 180
 	/declare use_Nukes bool outer TRUE
-	
+	/declare RallosZek bool outer FALSE
 	/declare hasTanked bool outer FALSE
 	/declare enraged bool outer FALSE
 	/declare enrageAttack bool outer FALSE

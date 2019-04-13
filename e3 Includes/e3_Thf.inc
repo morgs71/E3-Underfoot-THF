@@ -112,21 +112,21 @@ sub Event_cohme(string line, string ChatSender)
 		
 			:allowAccess
 	
-			 /if (${Me.Combat}) { 
+			 /if (${Me.Combat})  { 
 				/tell ${ChatSender} I'm in Combat please try again in a few !
 				/return
-			} else /if (!${Me.Combat}) { 
+			} else /if (!${Me.Combat})  { 
 			
-				/if (!${SpawnCount[pc ${ChatSender}]}) {
+				/if (!${SpawnCount[pc ${ChatSender}]})  {
 					/tell ${ChatSender} Your not in my Zone.
 					/Return
 				} else /if (${Me.Class.ShortName.Equal[MAG]})  {
 					/tell ${ChatSender} Call of Hero is Incoming...Please Standby.
 					/call e3_Cast ${Spawn[${ChatSender}].ID} "Call of the Hero"		
-				} else /if ( !${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Arion, Skull of the Ancient]} && ${FindItem[Arion, Skull of the Ancient].Timer}==0)  {
+				} else /if (!${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Arion, Skull of the Ancient]} && ${FindItem[Arion, Skull of the Ancient].Timer}==0)  {
 					/tell ${ChatSender} Call of Hero is Incoming...Please Standby.
 					/call e3_Cast ${Spawn[${ChatSender}].ID} "Arion, Skull of the Ancient"
-				} else /if ( !${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Orb of the Crimson Bull]} && ${FindItem[Orb of the Crimson Bull].Timer}==0)  {
+				} else /if (!${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Orb of the Crimson Bull]} && ${FindItem[Orb of the Crimson Bull].Timer}==0)  {
 					/tell ${ChatSender} Call of Hero is Incoming...Please Standby.
 					/call e3_Cast ${Spawn[${ChatSender}].ID} "Orb of the Crimson Bull"
 				} else /if (!${Me.Class.ShortName.Equal[MAG]} && !${FindItemCount[Arion, Skull of the Ancient]} && !${FindItemCount[Orb of the Crimson Bull]})  {
@@ -318,8 +318,35 @@ SUB EVENT_attendance(line, ChatSender)
 /return
 
 
+|-------------- Rallos Zek Event  -----------------|
+|  Enables Bots to use Blue Rof of Zek             |
+| /ralloson   - Starts Bane Nuking                 |
+| /rallosoff  - Stops Bane Nuking (resets on zone) |
+|--------------------------------------------------|
 
+
+#event RallosZekOn "<#1#> ralloszek on"
 		
+		
+sub Event_RallosZekOn
+
+/if (${Select[${Me.Class.ShortName},CLR,DRU,SHM,WIZ,NEC,ENC,MAG]} && ${FindItem[=Blue Rod of Zek].ID})  {
+	/varset RallosZek True
+	/docommand ${ChatToggle} Rallos Zek will burn! BANE NUKES ENGAGED !!!!
+}	
+/RETURN	
+
+#event RallosZekOff "<#1#> ralloszek off"
+		
+		
+sub Event_RallosZekOff
+
+/if (${Select[${Me.Class.ShortName},CLR,DRU,SHM,WIZ,NEC,ENC,MAG]} && ${FindItem[=Blue Rod of Zek].ID})  {
+	/varset RallosZek False
+	/docommand ${ChatToggle} Rallos Zek Bane mode DISABLED!!
+}	
+/RETURN	
+	
 		
 		
 	
@@ -348,6 +375,8 @@ Sub thf_Aliases
 	/squelch /alias /valegate /bc valegate
 	/squelch /alias /xeru /bc Xeru deathtouch
 	/squelch /alias /attendance /bc attendance
+	/squelch /alias /ralloson /bc ralloszek on
+	/squelch /alias /rallosoff /bc ralloszek off
 
 /if (${Debug} || ${Debug_Thf}) /echo <== thf_Aliases -|
 /return
