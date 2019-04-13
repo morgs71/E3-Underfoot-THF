@@ -16,18 +16,16 @@ Movement:
 /valegate - All bots will use thier token to travel to the vale
 
 CoH:
-
 /tell <bot> cohme - bot will summon the sender to them if mage or has item
 /tell <bot> cohall - bot will summon all netbots to them if mage or has item
 
 Buffs:
-
 /buff - All bots with Group Buffs listed in their Bot Inis will cast those buffs on you
 /BuffIt - All bots with Group Buffs listed in their Bot Inis cast those buffs on your target
 /tell <bot> buffme - Anyone can tell one of your bots to buff them with group buffs
+/BuffGroups - Will buff the leader of all net bot groups
 
 Assists
-
 /AssistOn - All bots will Assist on your current target
 /BackOff  - All bots will Back Off a target they're currently Assisting on
 /QuickBurn - All bots will use all Disciplines and AAs set up for Quick Burn in their Bot Inis
@@ -41,3 +39,9 @@ Groups:
 /Group GROUPNAME - Will auto-invite members and re-form any saved GROUPNAME
 /DisbandAll - All bots disband from their groups and raids
 
+THF Events
+/ralloson  - Engages Rallos Zek Bane Nukes (Blue Rod of Zek)
+/rallosoff - Disengages Rallos Zek Bane Nukes (Blue Rod of Zek) will also reset on zone
+
+Pets:
+/pets on/off  - Toggle the use of WoS/Draekon/Other Item summoned pets in Non-Pet class bots.
