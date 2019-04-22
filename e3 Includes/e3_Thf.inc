@@ -348,7 +348,92 @@ sub Event_RallosZekOff
 /RETURN	
 	
 		
+
+|-----------------------------------------------------Reaper of Mortality-----------------------Original by Bazillions--Editited for E3 by Muergan------|
+
+#Event ReaperOfMortalityDuck "The Reaper of Mortality levels his eyes with your throat."
+#Event ReaperOfMortalityUnduck "You feel the hand of death steal the mortality of those who are too afraid to stand toe-to-toe with their foe."
+#Event ReaperOfMortalityMoveClose "Come Foolish Mortals, if you wish to play, then so be it. We shall see how brave you really are! Come to Me!"
+#Event ReaperOfMortalityUnmoveClose "You feel the hand of death steal the mortality of those who are too afraid to stand toe-to-toe with their foe."
+#Event ReaperOfMortalityMoveFar "Come Foolish Mortals, if you wish to play, then so be it. We shall play a quick game of cat and mouse.  Run fools!"
+#Event ReaperOfMortalityUnmoveFar "You feel the hand of death steal the mortality of those who dare approach too closely."
+
+
+
+Sub Event_ReaperOfMortalityDuck(string line)
+	/popup Duck!!!
+	/if (${IsTank}) /return
+	/keypress d
+
+/return
+
+Sub Event_ReaperOfMortalityUnduck(string line)
+	/popup Ducking finished
+	/if (${IsTank}) /return
+	/keypress d
+	/doevents Assist
+
+/return
+
+Sub Event_ReaperOfMortalityMoveClose(string line)
+	/popup Move close!!!
+	/if (${IsTank})  {  
+		/rsay Move close to reaper !
+		/return
+	}
+	/squelch /stick moveback snaproll 15 uw
+	/delay 10 !${Me.Moving} || ${Target.Distance} < 15
+	/squelch /stick hold moveback behind ${AssistStickDistance} uw	
+	/delay 10 ${Me.Moving}
+/return
+
+Sub Event_ReaperOfMortalityUnmoveClose(string line)
+	/popup Move close finished 
+	/if (${IsTank})  {
+		/rsay Safe to move away !
+		/return
+	}
+	/unstick
+	/doevents Assist
+
+/return
+
+Sub Event_ReaperOfMortalityMoveFar(string line)
+	/popup Run away!!!
+	/if (${IsTank})  {
+		/rsay Move away from reaper !
+		/return
+	} 
+	/doevents Backoff
+	/moveto loc 37 -34
+	/if (${Select[${Me.Class.ShortName},BST,PAL,SHD,ROG,MNK,WAR,RNG,BRD,BER]})  {
+		/return
+	}
+	/doevents Assist
+	
+	
+/return
+
+Sub Event_ReaperOfMortalityUnmoveFar(string line)
+	/popup Run away finished
+	
+	/if (${IsTank})  {
+		/rsay Safe to move !
+		/return
+	} 
+	/doevents Assist
+
+/return
 		
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 
 Sub Thf_Setup
