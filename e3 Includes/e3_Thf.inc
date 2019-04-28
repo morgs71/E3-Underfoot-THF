@@ -347,9 +347,63 @@ sub Event_RallosZekOff
 }	
 /RETURN	
 	
-		
 
-|-----------------------------------------------------Reaper of Mortality-----------------------Original by Bazillions--Editited for E3 by Muergan------|
+
+|-----------------Macro Shared Events-------By Bazillions & Muergan--------|
+
+
+Sub WaitUntilNotMoving
+	:WaitUntilNotMovingLoop
+		/delay 4
+		/doevents
+	/if (${Me.Moving})  {
+		/goto :WaitUntilNotMovingLoop
+	}
+/return
+
+
+Sub DraekonCalled
+	:DraekonCalledLoop
+		/delay 4
+		/doevents
+	/if (${DraekonCall} = 1)  {
+		/goto :DraekonCalledLoop
+	}
+/return
+
+
+Sub DraekonGrass
+	:DraekonGrassLoop
+		/delay 4
+		/doevents
+	/if (${DraekonGrass} = 1)  {
+		/goto :DraekonGrassLoop
+	}
+/return
+
+Sub ReaperDuck
+	:ReaperDuckLoop
+		/delay 4
+		/doevents
+	/if (${ReaperDucking} = 1)  {
+		/goto :ReaperDuckLoop
+	}
+/return
+
+Sub ReaperFarAway
+	:ReaperFarAwayLoop
+		/delay 4
+		/doevents
+	/if (${ReaperFar} = 1)  {
+		/goto :ReaperFarAwayLoop
+	}
+/return
+	
+
+|---------------Reaper of Mortality-----------------------Original by Bazillions--Editited for E3 by Muergan------|
+|																												  |
+|  *Note -  Start all character in Melee Range																	  |
+|-----------------------------------------------------------------------------------------------------------------|
 
 #Event ReaperOfMortalityDuck "The Reaper of Mortality levels his eyes with your throat."
 #Event ReaperOfMortalityUnduck "You feel the hand of death steal the mortality of those who are too afraid to stand toe-to-toe with their foe."
@@ -363,13 +417,16 @@ sub Event_RallosZekOff
 Sub Event_ReaperOfMortalityDuck(string line)
 	/popup Duck!!!
 	/if (${IsTank}) /return
+	/varset ReaperDucking 1
 	/keypress d
+	/call ReaperDuck
 
 /return
 
 Sub Event_ReaperOfMortalityUnduck(string line)
 	/popup Ducking finished
 	/if (${IsTank}) /return
+	/varset ReaperDucking 0
 	/keypress d
 	/doevents Assist
 
@@ -381,50 +438,145 @@ Sub Event_ReaperOfMortalityMoveClose(string line)
 		/rsay Move close to reaper !
 		/return
 	}
-	/squelch /stick moveback snaproll 15 uw
-	/delay 10 !${Me.Moving} || ${Target.Distance} < 15
-	/squelch /stick hold moveback behind ${AssistStickDistance} uw	
-	/delay 10 ${Me.Moving}
+	/call Event_MoveToReaper
 /return
 
-Sub Event_ReaperOfMortalityUnmoveClose(string line)
-	/popup Move close finished 
-	/if (${IsTank})  {
-		/rsay Safe to move away !
-		/return
-	}
-	/unstick
-	/doevents Assist
-
-/return
 
 Sub Event_ReaperOfMortalityMoveFar(string line)
 	/popup Run away!!!
 	/if (${IsTank})  {
 		/rsay Move away from reaper !
 		/return
-	} 
-	/doevents Backoff
+		} 
+	/varset ReaperFar 1
+	/doevents BackOff
 	/moveto loc 37 -34
-	/if (${Select[${Me.Class.ShortName},BST,PAL,SHD,ROG,MNK,WAR,RNG,BRD,BER]})  {
+	/call WaitUntilNotMoving
+	/if (${Select[${Me.Class.ShortName},MAG,DRU,WIZ,SHM,NEC,ENC]})  {
+		/doevents Assist
 		/return
-	}
-	/doevents Assist
-	
-	
+		}
+	/call ReaperFarAway
 /return
 
 Sub Event_ReaperOfMortalityUnmoveFar(string line)
 	/popup Run away finished
-	
 	/if (${IsTank})  {
 		/rsay Safe to move !
 		/return
 	} 
+	/varset ReaperFar 0
+	/call Event_MoveToReaper
+/return
+
+
+Sub Event_MoveToReaper
+
+ /bc [Event] - Returning to The Reaper of Mortality
+
+	/if (${IsTank})  {
+		/rsay Safe to move back ${Time}
+		/return
+		}
+	:MoveToReaper
+	/if (${Spawn[NPC =The Reaper of Mortality].ID} && ${Spawn[NPC =The Reaper of Mortality].Distance} > 12)  {
+		/moveto id ${Spawn[NPC =The Reaper of Mortality].ID}
+		/delay 5
+		}
+    /if (${Spawn[NPC =The Reaper of Mortality].ID}!=NULL && ${Spawn[NPC =The Reaper of Mortality].Distance} > 12) /goto :MoveToReaper
+	/call WaitUntilNotMoving
 	/doevents Assist
 
 /return
 		
+	
+	
+|----------------------------Draekon HoH---------------Originals by Bazillions & Rafe--Editited for E3 by Muergan------|
+
+#Event DraekonMoveToNpc "You hear the voice of #1# calling to you, 'Come to me young one, we must combine our might to destroy him!'"
+#Event DraekonGoToGrass "The world begins to spin as Draekon starts to chant an evil spell pulling you towards him."
+#Event DraekonGoToMelee "The world begins to spin as Draekon starts to chant a powerful spell pushing you away from him"
+#Event DraekonSafeFromGrass "You escape the power of Draekon's spell"
+#Event DraekonVoiceEnd "You join your powers with #1#, preventing Draekon from attacking!"
+
+
+Sub Event_DraekonMoveToNpc(string line, string NpcName)
+	/if (${IsTank}) /return
+	/varset DraekonCall 1
+	/doevents BackOff
+	/stick off
+	/target npc ${NpcName}
+	/delay 3
+	/stick hold
+	/call WaitUntilNotMoving
+	/call DraekonCalled
+/return
+
+Sub Event_DraekonGoToGrass(string line)
+	
+	/if (${IsTank})  {
+		/rsay Everyone move to grass ${Time}
+		/return
+		}
+	/varset DraekonGrass 1
+	/doevents BackOff
+	/moveto loc 335.71 -1582.96
+	/call WaitUntilNotMoving
+	/if (${Select[${Me.Class.ShortName},MAG,DRU,WIZ,SHM,NEC,ENC]})  {
+		/doevents Assist
+		/return
+		}
+	/call DraekonGrass
+/return
+
+Sub Event_DraekonGoToMelee(string line)
+
+	/if (${IsTank})  {
+		/rsay Everyone move to melee range ${Time}
+		/return
+		}
+	/stick off
+	/call Event_MoveToDraekon
+/return
+
+Sub Event_DraekonSafeFromGrass(string line)
+
+	/if (${IsTank})  {
+		/rsay Safe to move back ${Time}
+		/return
+		}
+	/varset DraekonGrass 0
+	/call Event_MoveToDraekon
+/return
+
+
+Sub Event_DraekonVoiceEnd(string Line, string targetName)
+
+	/varset DraekonCall 0
+    /call Event_MoveToDraekon
+
+/return
+
+	
+Sub Event_MoveToDraekon
+
+ /bc [Event] - Returning to Lord Draekon
+
+	/if (${IsTank})  {
+		/rsay Safe to move back ${Time}
+		/return
+		}
+	:MoveToDraekon
+	/if (${Spawn[NPC =Lord Draekon].ID} && ${Spawn[NPC =Lord Draekon].Distance} > 20)  {
+		/moveto id ${Spawn[NPC =Lord Draekon].ID}
+		/delay 5
+		}
+    /if (${Spawn[NPC =Lord Draekon].ID}!=NULL && ${Spawn[NPC =Lord Draekon].Distance} > 20) /goto :MoveToDraekon
+	/call WaitUntilNotMoving
+	/doevents Assist
+
+/return
+	
 	
 	
 	
@@ -439,7 +591,11 @@ Sub Event_ReaperOfMortalityUnmoveFar(string line)
 Sub Thf_Setup
 /if (${Debug}) /echo |- Thf_Setup ==>
 	
-
+/declare EventImmediatePriority int outer 0
+/declare DraekonCall int outer 0
+/declare DraekonGrass int outer 0
+/declare ReaperDucking int outer 0
+/declare ReaperFar int outer 0
 	
 	
 /if (${Debug}) /echo <== Thf_Setup -|
