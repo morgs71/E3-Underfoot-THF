@@ -54,6 +54,9 @@ SUB BER_MacroSettings
 SUB BER_CharacterSettings
 /if (${Debug}) /echo |- BER_CharacterSettings ==>
 
+/call WriteToIni "${Character_Ini},${Me.Class},Cry Havoc (On/Off)" On
+/call WriteToIni "${Character_Ini},${Me.Class},Band of the Gargoyle-Cold Rage IV (On/Off))" On
+
 /if (${Debug}) /echo <== BER_CharacterSettings -|
 /RETURN
 

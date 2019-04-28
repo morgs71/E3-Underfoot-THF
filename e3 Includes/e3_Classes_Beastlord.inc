@@ -55,6 +55,8 @@ SUB BST_MacroSettings
 SUB BST_CharacterSettings
 /if (${Debug}) /echo |- BST_CharacterSettings ==>
 
+/call WriteToIni "${Character_Ini},${Me.Class},Band of the Gargoyle-Wild Cat IV (On/Off))" On
+
 /if (${Debug}) /echo <== BST_CharacterSettings -|
 /RETURN
 

@@ -17,7 +17,13 @@ SUB check_warProvoke(provokeDisc)
 /if (${Debug}) /echo |- check_warProvoke ==>
 
 	/if (!${Defined[MinBellowEndurance]}) {
-		/if (${provokeDisc.Equal[Ancient: Chaos Cry]}) {
+		/if (${provokeDisc.Equal[Enraged Scowl Rk. III]}) {
+			/declare MinBellowEndurance int outer 320
+		} else /if (${provokeDisc.Equal[Enraged Scowl Rk. II]}) {
+			/declare MinBellowEndurance int outer 335
+		} else /if (${provokeDisc.Equal[Enraged Scowl Rk. I]}) {
+			/declare MinBellowEndurance int outer 340
+		} else /if (${provokeDisc.Equal[Ancient: Chaos Cry]}) {
 			/declare MinBellowEndurance int outer 300
 		} else /if (${provokeDisc.Equal[Bellow of the Mastruq]}) {
 			/declare MinBellowEndurance int outer 275
@@ -58,6 +64,7 @@ Sub WAR_Setup
 /if (${Debug}) /echo |- WAR_Setup ==>
 
 	/call IniToVar "${MacroData_Ini},Class Specific Info,Warrior Provoke Disciplines" warriorBellows string outer
+	/call IniToVar "${Character_Ini},Warrior,Commanding Voice (On/Off)" CommandVoice bool outer 
 
 /if (${Debug}) /echo <== WAR_Setup -|
 /return
@@ -66,7 +73,7 @@ Sub WAR_Setup
 
 Sub WAR_Background_Events
 
-/if (${Me.Combat} && ${Me.CombatAbilityReady[Commanding Voice]} && !${Me.Song[Commanding Voice].ID}) {
+/if (${CommandVoice} && {${Me.Combat} && ${Me.CombatAbilityReady[Commanding Voice]} && !${Me.Song[Commanding Voice].ID})  {
 
 /disc Commanding Voice
 }
@@ -80,7 +87,7 @@ SUB WAR_MacroSettings
 /if (${Debug}) /echo |- WAR_MacroSettings ==>
 
 	| MacroData settings
-	/call WriteToIni "${MacroData_Ini},Class Specific Info,Warrior Provoke Disciplines" "Provoke,Bellow,Berate,Incite,Bellow of the Mastruq,Ancient: Chaos Cry" 0
+	/call WriteToIni "${MacroData_Ini},Class Specific Info,Warrior Provoke Disciplines" "Provoke,Bellow,Berate,Incite,Bellow of the Mastruq,Ancient: Chaos Cry,Enraged Scowl Rk. I,Enraged Scowl Rk. II,Enraged Scowl Rk. III" 0
 	
 	| AdvSettings
 	/call WriteToIni "${advSettings_Ini},WAR Functions,WAR Function#1" "check_Burns" 1
@@ -95,6 +102,8 @@ SUB WAR_MacroSettings
 SUB WAR_CharacterSettings
 /if (${Debug}) /echo |- WAR_CharacterSettings ==>
 
+/call WriteToIni "${Character_Ini},${Me.Class},Commanding Voice (On/Off)" On
+
 /if (${Debug}) /echo <== WAR_CharacterSettings -|
 /RETURN
 
@@ -107,27 +116,3 @@ Sub WAR_Aliases
 /return
 
 
-|**
-
-Additional warrior taunt discs.  I'm not sure hwo thses work, so I haven't added them.
-	bazu bellow
-	scowl
-	scowl rk. ii
-	scowl rk. iii
-	sneer
-	sneer
-	sneer
-	bazu bluster
-	bazu
-	bazu
-	jeer
-	jeer
-	jeer
-	bazu roar
-	bazu
-	bazu
-	scoff
-	grendlaen roar
-	scorn
-	krondal's roar
-	ridicule

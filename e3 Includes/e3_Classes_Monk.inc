@@ -50,8 +50,8 @@ SUB MNK_MacroSettings
 SUB MNK_CharacterSettings
 /if (${Debug}) /echo |- MNK_CharacterSettings ==>
 
-	/call WriteToIni "${Character_Ini},${Me.Class},Combat Song (On/Off)" On
-	/call WriteToIni "${Character_Ini},${Me.Class},Combat Song Discipline"
+/call WriteToIni "${Character_Ini},${Me.Class},Combat Song (On/Off)" On
+/call WriteToIni "${Character_Ini},${Me.Class},Combat Song Discipline"
 
 /if (${Debug}) /echo <== MNK_CharacterSettings -|
 /RETURN

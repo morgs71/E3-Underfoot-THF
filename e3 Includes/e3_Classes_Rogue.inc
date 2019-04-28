@@ -61,7 +61,7 @@ Sub ROG_Setup
   /declare strikeTimer timer outer
 	/call IniToVar "${Character_Ini},Rogue,Auto-Hide (On/Off)" AutoHide bool outer
 	/call IniToVar "${Character_Ini},Rogue,Auto-Evade (On/Off)" AutoEvade bool outer
-	/call IniToVar "${Character_Ini},Rogue,Thief's Eyes (On/Off)" ThiefEyes bool outer
+	/call IniToVar "${Character_Ini},Rogue,Thiefs Eyes (On/Off)" ThiefEyes bool outer
 	| Assassin Strikes
 	/call IniToVar "${Character_Ini},Rogue,Sneak Attack Discipline" strikeDisc string outer
 
@@ -77,9 +77,9 @@ SUB ROG_MacroSettings
 
 SUB ROG_CharacterSettings
 /if (${Debug}) /echo |- ROG_CharacterSettings ==>
-	/call WriteToIni "${Character_Ini},${Me.Class},Auto-Hide (On/Off)" Off
+	/call WriteToIni "${Character_Ini},${Me.Class},Auto-Hide (On/Off)" On
 	/call WriteToIni "${Character_Ini},${Me.Class},Auto-Evade (On/Off)" On
-	/call WriteToIni "${Character_Ini},${Me.Class},Thief's Eyes (On/Off)" On
+	/call WriteToIni "${Character_Ini},${Me.Class},Thiefs Eyes (On/Off)" On
 	/call WriteToIni "${Character_Ini},${Me.Class},Sneak Attack Discipline"
 /if (${Debug}) /echo <== ROG_CharacterSettings -|
 /RETURN
