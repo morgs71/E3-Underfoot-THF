@@ -80,7 +80,7 @@ SUB event_Assist(line, ChatSender, int MobID)
 						| Melee / Ranged assist
 						/if (${AssistType.Equal[melee]}) {
 						
-							/if (${Me.Class.ShortName.Equal[ROG]} && ${Me.Invis} && ${Me.Sneaking}) {
+							/if (${Me.Class.ShortName.Equal[ROG]} && ${Me.Invis} && ${Me.Sneaking})  {
 								/call check_rogStrike
 								}
 							/attack on
@@ -1266,9 +1266,9 @@ SUB event_SwarmPets(line, ChatSender, int swarmTarget)
 				/varset swarmPets[2] Host of the Elements
 			| Necromancer abilities.
 			} else /if (${Me.Class.ShortName.Equal[NEC]}) {
-				/declare swarmPets[2] string local
+				/declare swarmPets[1] string local
 				/varset swarmPets[1] Swarm of Decay
-				/varset swarmPets[2] Wake the Dead
+|--Broken on THF--	/varset swarmPets[2] Wake the Dead
 				
 			| Shaman abilities.
 			} else /if (${Me.Class.ShortName.Equal[SHM]}) {

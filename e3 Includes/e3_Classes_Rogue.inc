@@ -9,11 +9,10 @@ Sub check_rogStrike
 /if (${Debug}) /echo |- rogueStrike ==>	
 	
 
-	/if (${Me.PctEndurance} < 20 && ${Me.CombatAbilityReady[${strikeDisc}]} && ${Me.Invis} && ${Me.Sneaking}) {
+	/if (${Me.CombatAbilityReady[${strikeDisc}]} && ${Me.Invis} && ${Me.Sneaking}) {
 		|-- Use 'Assassin's Strike' type disc. --|
 		/delay 1s
 		/disc ${strikeDisc}
-		/doability Backstab
 	}
 /if (${Debug}) /echo <== rogueStrike -|
 /return
