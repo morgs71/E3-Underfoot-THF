@@ -13,6 +13,9 @@
 Sub MNK_Setup
 /if (${Debug}) /echo |- MNK_Setup ==>
 	
+/call IniToVar "${Character_Ini},Monk,Combat Song (On/Off)" MonkSong bool outer	
+/call IniToVar "${Character_Ini},Monk,Combat Song Discipline" MonkSongDisc string outer
+	
 /if (${Debug}) /echo <== MNK_Setup -|
 /return
 
@@ -20,9 +23,9 @@ Sub MNK_Setup
 
 Sub MNK_Background_Events
 
-/if (${Me.Combat} && ${Me.CombatAbilityReady[Hands of the Master Rk. I]} && !${Me.Song[Hands of the Master Rk. I].ID}) {
+/if (${MonkSong} && ${Me.Combat} && ${Me.CombatAbilityReady[${MonkSongDisc}]} && !${Me.Song[${MonkSongDisc}].ID}) {
 
-/disc Hands of the Master Rk. I
+/disc ${MonkSongDisc}
 }
 
 
@@ -46,6 +49,9 @@ SUB MNK_MacroSettings
 
 SUB MNK_CharacterSettings
 /if (${Debug}) /echo |- MNK_CharacterSettings ==>
+
+	/call WriteToIni "${Character_Ini},${Me.Class},Combat Song (On/Off)" On
+	/call WriteToIni "${Character_Ini},${Me.Class},Combat Song Discipline"
 
 /if (${Debug}) /echo <== MNK_CharacterSettings -|
 /RETURN
