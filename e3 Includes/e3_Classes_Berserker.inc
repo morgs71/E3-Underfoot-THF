@@ -12,7 +12,10 @@
 
 Sub BER_Setup
 /if (${Debug}) /echo |- BER_Setup ==>
-	
+
+/call IniToVar "${Character_Ini},Beserker,Cry Havoc (On/Off)" CryHavoc bool outer
+/call IniToVar "${Character_Ini},Beserker,Band of the Gargoyle-Cold Rage IV (On/Off)" ZerkGargoyle bool outer
+
 /if (${Debug}) /echo <== BER_Setup -|
 /return
 
@@ -20,9 +23,15 @@ Sub BER_Setup
 
 Sub BER_Background_Events
 
-/if (${Me.Combat} && ${Me.CombatAbilityReady[Cry Havoc]} && !${Me.Song[Cry Havoc].ID}) {
+/if (${CryHavoc} && ${Me.Combat} && ${Me.CombatAbilityReady[Cry Havoc]} && !${Me.Song[Cry Havoc].ID})  {
 
-/disc Cry Havoc
+	/disc Cry Havoc
+}
+
+/if (${ZerkGargoyle} && !${ZerkGargoyleTimer} && ${Me.Combat} && !${Me.Song[Cold Rage IV].ID} && ${FindItemCount[=Band of the Gargoyle]})  {
+
+	/call e3_Cast ${Me.ID} "Band of the Gargoyle"
+	/call CreateTimer ZerkGargoyleTimer 121
 }
 
 /return
