@@ -12,6 +12,8 @@
 
 Sub BST_Setup
 /if (${Debug}) /echo |- BST_Setup ==>
+
+/call IniToVar "${Character_Ini},Beastlord,Band of the Gargoyle-Wild Cat IV (On/Off)" BeastGargoyle bool outer
 	
 /if (${Debug}) /echo <== BST_Setup -|
 /return
@@ -19,6 +21,12 @@ Sub BST_Setup
 
 
 Sub BST_Background_Events
+
+/if (${BeastGargoyle} && !${BeastGargoyleTimer} && ${Me.Combat} && ${FindItemCount[=Band of the Gargoyle]})  {
+
+	/call e3_Cast ${Me.ID} "Band of the Gargoyle"
+	/call CreateTimer BeastGargoyleTimer 21
+}
 
 /return
 
