@@ -73,9 +73,10 @@ Sub WAR_Setup
 
 Sub WAR_Background_Events
 
-/if (${CommandVoice} && {${Me.Combat} && ${Me.CombatAbilityReady[Commanding Voice]} && !${Me.Song[Commanding Voice].ID})  {
+/if (${CommandVoice} && ${Me.Combat} && ${Me.CombatAbilityReady[Commanding Voice]} && !${Me.Song[Commanding Voice].ID})  {
 
 /disc Commanding Voice
+
 }
 
 
