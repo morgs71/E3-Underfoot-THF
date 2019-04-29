@@ -366,7 +366,7 @@ Sub DraekonCalled
 	:DraekonCalledLoop
 		/delay 4
 		/doevents
-	/if (${DraekonCall} = 1)  {
+	/if (${DraekonCall}==1)  {
 		/goto :DraekonCalledLoop
 	}
 /return
@@ -376,7 +376,7 @@ Sub DraekonGrass
 	:DraekonGrassLoop
 		/delay 4
 		/doevents
-	/if (${DraekonGrass} = 1)  {
+	/if (${DraekonGrass}==1)  {
 		/goto :DraekonGrassLoop
 	}
 /return
@@ -385,7 +385,7 @@ Sub ReaperDuck
 	:ReaperDuckLoop
 		/delay 4
 		/doevents
-	/if (${ReaperDucking} = 1)  {
+	/if (${ReaperDucking}==1)  {
 		/goto :ReaperDuckLoop
 	}
 /return
@@ -394,7 +394,7 @@ Sub ReaperFarAway
 	:ReaperFarAwayLoop
 		/delay 4
 		/doevents
-	/if (${ReaperFar} = 1)  {
+	/if (${ReaperFar}==1)  {
 		/goto :ReaperFarAwayLoop
 	}
 /return
@@ -591,7 +591,6 @@ Sub Event_MoveToDraekon
 Sub Thf_Setup
 /if (${Debug}) /echo |- Thf_Setup ==>
 	
-/declare EventImmediatePriority int outer 0
 /declare DraekonCall int outer 0
 /declare DraekonGrass int outer 0
 /declare ReaperDucking int outer 0
