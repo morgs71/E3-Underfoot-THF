@@ -45,3 +45,6 @@ THF Events
 
 Pets:
 /pets on/off  - Toggle the use of WoS/Draekon/Other Item summoned pets in Non-Pet class bots.
+
+Crowd Control:
+/mezit - Enchanter will single target mez with spell defined in bot.ini
