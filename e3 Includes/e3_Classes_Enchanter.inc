@@ -118,12 +118,72 @@ SUB check_Rune
 /RETURN
 
 
+|---------------Mez Target-----------------Written by Killians----Edited by Muergan ------------------|
+
+
+#event MezTarget "<#1#> Mez on #2#"
+#event MezTarget "#1# tell your party, 'Mez on #2#'"
+#event MezTarget "#1# tells the group, 'Mez on #2#'"
+#event MezTarget "#1# tells you, 'Mez on #2#'"
+
+
+SUB event_MezTarget(line, ChatSender, int MobID)
+
+/target ${MobID}
+/call MezmerizeTarget
+
+/return
+
+
+sub MezmerizeTarget
+
+/declare GiveUpValue int local 2
+/if (${${Target.ID}${Spell[${Mez_Spell}].ID}} == 0) {
+	/if (!${Defined[${Target.ID}${Spell[${Mez_Spell}].ID}]}) /declare ${Target.ID}${Spell[${Mez_Spell}].ID} timer outer 0
+	:recast
+	/call e3_Cast ${Target.ID} "${Mez_Spell}" 
+	/if (${Select[${castReturn},CAST_RESISTED]}) {
+		/if (!${Defined[ResistRetry]}) /declare ResistRetry int local 0
+		/docommand ${ChatToggle} **Warning** ${Target.CleanName} resisted ${Mez_Spell}.
+		/if (${Defined[ResistRetry]}) /varcalc ResistRetry ${ResistRetry}+1
+		/if (${ResistRetry} < ${GiveUpValue}) /goto :recast
+	} else /if (${Select[${castReturn},CAST_IMMUNE]}) {
+		/varset ${Target.ID}${Spell[${Mez_Spell}].ID} 20000000
+		/docommand ${ChatToggle} **Warning** ${Target.CleanName} is IMMUNE to ${Mez_Spell}.
+	} else /if (${Select[${castReturn},CAST_CANNOTSEE]} && ${spamTimer}==0) {
+		/if (!${Defined[Retry]}) /declare LOSRetry int local 0
+		/docommand ${ChatToggle} **Warning** I cannot see ${Target.CleanName}!!.
+		/if (${Defined[spamTimer]}) /varset spamTimer 15s
+		/if (${Defined[LOSRetry]}) /varcalc LOSRetry ${LOSRetry}+1
+		/if (${LOSRetry} < ${GiveUpValue}) /goto :recast
+	} else /if (${Select[${castReturn},CAST_OUTOFMANA]} && ${spamTimer}==0) {
+		/docommand ${ChatToggle} **Warning** I do not have enough mana to cast ${MyDebuffs[${i}]}!!.
+		/if (${Defined[spamTimer]}) /varset spamTimer 15s
+	} else /if (${Select[${castReturn},CAST_OUTOFRANGE]} && ${spamTimer}==0) {
+		/docommand ${ChatToggle} **Warning** ${MyDebuffs[${i}]} is out of range for ${MyDebuffs[${i}]}!!.
+		/if (${Defined[spamTimer]}) /varset spamTimer 15s
+	} else /if (${Select[${castReturn},CAST_SUCCESS]})	{
+		/docommand ${ChatToggle} Landed ${Mez_Spell} on ${Target.CleanName}!!.
+		/if (${Defined[${Target.ID}${Spell[${Mez_Spell}].ID}]}) /varset ${Target.ID}${Spell[${Mez_Spell}].ID} ${Math.Calc[${Spell[${Mez_Spell}].Duration} * 6-6]}s
+	}
+}
+/delay 5s !${Me.Casting.ID}
+/return
+
+
+
+
+
+
+
+
 
 Sub ENC_Setup
 /if (${Debug}) /echo |- ENC_Setup ==>
 
 	/if (${Ini[${Character_Ini},Enchanter,Chain Rune].Length}) /call IniToVar "${Character_Ini},Enchanter,Chain Rune" chainRune string outer
-
+	/call INItoVar "${Character_Ini},Enchanter,Mez Spell" Mez_Spell string outer
+		
 /if (${Debug}) /echo <== ENC_Setup -|
 /return
 
@@ -163,6 +223,8 @@ SUB ENC_CharacterSettings
 /if (${Debug}) /echo |- ENC_CharacterSettings ==>
 
 	/call WriteToIni "${Character_Ini},Enchanter,Chain Rune"
+	/call WriteToIni "${Character_Ini},Enchanter,Mez Spell"
+
 
 /if (${Debug}) /echo <== ENC_CharacterSettings -|
 /RETURN
@@ -175,14 +237,13 @@ Sub ENC_Aliases
 	/squelch /alias /runeon /bc Rune on
 	/squelch /alias /runeoff /bc Rune off
 
+
 /if (${Debug}) /echo <== ENC_Aliases -|
 /return
 
 
-|**
 
-
-
+|** not working below -------------------|
 
 
 #event AutoMez "<#*#> Mez All"
@@ -211,6 +272,8 @@ sub event_AutoMez
 	/echo |- AutoMez -| <==
 }
 /return
+
+
 sub MezTarget
 /declare GiveUpValue int local 3
 /if (${${Target.ID}${Spell[${AutoMez_Spell}].ID}} == 0) {
@@ -252,6 +315,8 @@ sub event_AutoMez_Off
 	/varset do_AutoMez FALSE
 }
 /return
+
+
 #event AutoMez_On "<#*#> Start AutoMez"
 #event AutoMez_On "<#*#> AutoMez On"
 sub event_AutoMez_On

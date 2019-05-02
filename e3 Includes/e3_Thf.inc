@@ -398,6 +398,15 @@ Sub ReaperFarAway
 		/goto :ReaperFarAwayLoop
 	}
 /return
+
+Sub SeravinceStun
+	:SeravinceStunLoop
+		/delay 4
+		/doevents
+	/if (${SeravinceStun}==1)  {
+		/goto :SeravinceStunLoop
+	}
+/return
 	
 
 |---------------Reaper of Mortality-----------------------Original by Bazillions--Editited for E3 by Muergan------|
@@ -485,7 +494,7 @@ Sub Event_MoveToReaper
 		}
     /if (${Spawn[NPC =The Reaper of Mortality].ID}!=NULL && ${Spawn[NPC =The Reaper of Mortality].Distance} > 12) /goto :MoveToReaper
 	/call WaitUntilNotMoving
-	/doevents Assist
+	/bc Assist on ${Spawn[NPC =The Reaper of Mortality].ID}
 
 /return
 		
@@ -573,8 +582,79 @@ Sub Event_MoveToDraekon
 		}
     /if (${Spawn[NPC =Lord Draekon].ID}!=NULL && ${Spawn[NPC =Lord Draekon].Distance} > 20) /goto :MoveToDraekon
 	/call WaitUntilNotMoving
-	/doevents Assist
+	/bc Assist on ${Spawn[NPC =Lord Draekon].ID}
 
+/return
+	
+	
+	
+	
+|------------------Seravince---------------Originals by Bazillions--Editited for E3 by Muergan------|	
+	
+	
+#Event SeravinceAoeStun "Emperor Seravince body goes rigid as he begins to look around at his attackers!"
+#Event SeravinceAoeStunComplete "You avoid the gaze of Seravince!"
+#Event SeravinceCreatesAdds "Seravince calls forth his advisors as he shouts, 'You will never be able to control or strike fear into the hearts of those whom follow their true Emperor!'"
+#Event SeravinceCallsAddsToAttack "The world begins to spin rapidly as Seravince calls forth his guardians!"
+	
+	
+	
+Sub Event_SeravinceAoeStun(string line)
+	/if (${IsTank})  {
+		/rsay Safe to move back ${Time}
+		/return
+		}
+	/varset SeravinceStun 1
+	/popup AoE Stun
+	/backoff
+	/face away
+	/if (${Select[${Me.Class.ShortName},MAG,DRU,WIZ,SHM,NEC,ENC]})  {
+		/doevents Assist
+		/return
+		}
+	/call SeravinceStun
+/return
+
+Sub Event_SeravinceAoeStunComplete(string line)
+	/if (${IsTank})  {
+		/rsay Safe to move back ${Time}
+		/return
+		}
+	/varset SeravinceStun 0
+	/popup AoE Stun Complete
+	/face fast
+	/bc Assist on ${Spawn[NPC =Emperor Seravince].ID}
+/return
+
+Sub Event_SeravinceCreatesAdds(string line)
+	/popup Seravince Created Adds
+	/if (${IsTank})  {
+		/rsay Safe to move back ${Time}
+		/return
+		}
+/return
+
+Sub Event_SeravinceCallsAddsToAttack(string line)
+	/popup Seravince Adds Attacking!!!
+	/if (${IsTank})  {
+		/rsay Safe to move back ${Time}
+		/return
+		}
+	/if (!${Defined[MyClass]}) /declare MyClass string outer ${Me.Class}
+	/if (${MyClass.Equal[Enchanter]}) {
+		/delay 50
+		:EnchanterSeravinceLoop
+		/target Advisor Tel`Quka
+		/call MezmerizeTarget
+		/target Advisor Vulth`Rak
+		/call MezmerizeTarget
+		/target Advisor Zser`Vith
+		/call MezmerizeTarget
+		/doevents
+		/if (${SpawnCount[npc "Emperor Seravince"]} > 0) {
+			/goto :EnchanterSeravinceLoop
+		}
+	}
 /return
 	
 	
@@ -582,8 +662,7 @@ Sub Event_MoveToDraekon
 	
 	
 	
-	
-	
+
 	
 	
 	
@@ -595,6 +674,7 @@ Sub Thf_Setup
 /declare DraekonGrass int outer 0
 /declare ReaperDucking int outer 0
 /declare ReaperFar int outer 0
+/declare SeravinceStun int outer 0
 	
 	
 /if (${Debug}) /echo <== Thf_Setup -|
@@ -617,6 +697,7 @@ Sub thf_Aliases
 	/squelch /alias /attendance /bc attendance
 	/squelch /alias /ralloson /bc ralloszek on
 	/squelch /alias /rallosoff /bc ralloszek off
+	/squelch /alias /mezit /bc Mez on ${Target.ID}
 
 /if (${Debug} || ${Debug_Thf}) /echo <== thf_Aliases -|
 /return
