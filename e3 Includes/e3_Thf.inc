@@ -12,7 +12,7 @@
 #event thfgate "#1# tells the group, 'thfgate'"
 #event thfgate "#1# tells you, 'thfgate'"
 sub Event_thfgate
-	 
+	 /doevents stop
 		/if (${FindItem[=Charm of Queen Adrianne].ID})  {
 			/call e3_Cast ${Me.ID} "Charm of Queen Adrianne"
 		} else /if (${FindItem[=Advanced Charm of Queen Adrianne].ID})  {
@@ -39,7 +39,7 @@ sub Event_thfgate
 #event valegate "#1# tells you, 'valegate'"
 sub Event_valegate
 	 
-		
+/doevents stop		
 /if (${FindItem[=Token of the Vale].ID})  {
 	/call e3_Cast ${Me.ID} "Token of the Vale"
 }
@@ -191,7 +191,7 @@ sub Event_cohall(string line, string ChatSender)
 						
 						/if (${Me.Class.ShortName.Equal[MAG]}) { 		 
 							/docommand ${ChatToggle} Call of Hero is Incoming on (${NetBots.Client[${i}]})!
-							/call e3_Cast ${NetBots[${NetBots.Client[${i}]}].ID} "Call of the Hero"	
+							/call e3_Cast ${NetBots[${NetBots.Client[${i}]}].ID} "Call of the Hero/giveuptimer|45s"	
 							/delay 5s
 					
 						} else /if ( !${Me.Class.ShortName.Equal[MAG]} && ${FindItemCount[Ino's Lost Trinket]} && ${FindItem[Ino's Lost Trinket].Timer}==0)  {			
@@ -352,6 +352,17 @@ sub Event_RallosZekOff
 |-----------------Macro Shared Events-------By Bazillions & Muergan--------|
 
 
+Sub IsTank
+/varset TankName ${Me.TargetOfTarget.CleanName}
+/if (${Select[${Me.Class.ShortName},PAL,SHD,WAR]} && ${Me.TargetOfTarget.CleanName.Equal[${Me.CleanName}]})  {
+	/varset IsTank TRUE
+} else /if (!${Select[${Me.Class.ShortName},PAL,SHD,WAR]} || !${Me.TargetOfTarget.CleanName.Equal[${Me.CleanName}]})  {
+	/varset IsTank FALSE
+}
+/return
+		
+		
+
 Sub WaitUntilNotMoving
 	:WaitUntilNotMovingLoop
 		/delay 4
@@ -407,6 +418,16 @@ Sub SeravinceStun
 		/goto :SeravinceStunLoop
 	}
 /return
+
+
+Sub ValikWait
+	:ValikWaitLoop
+		/delay 4
+		/doevents
+	/if (${ValikWait}==1)  {
+		/goto :ValikWaitLoop
+	}
+/return
 	
 
 |---------------Reaper of Mortality-----------------------Original by Bazillions--Editited for E3 by Muergan------|
@@ -424,6 +445,7 @@ Sub SeravinceStun
 
 
 Sub Event_ReaperOfMortalityDuck(string line)
+	/call IsTank
 	/popup Duck!!!
 	/if (${IsTank}) /return
 	/varset ReaperDucking 1
@@ -433,15 +455,24 @@ Sub Event_ReaperOfMortalityDuck(string line)
 /return
 
 Sub Event_ReaperOfMortalityUnduck(string line)
+	/call IsTank
 	/popup Ducking finished
-	/if (${IsTank}) /return
+	/if (${IsTank}) /goto :SkipDuck
 	/varset ReaperDucking 0
 	/keypress d
-	/doevents Assist
+	:SkipDuck
+	/if (${IsTank})  {
+		/call KillReaper
+	} else /if (!${IsTank})  {	
+		/if (${MainAssist.Equal[${Me.CleanName}]})  {
+			/call KillReaper
+		}
+	}
 
 /return
 
 Sub Event_ReaperOfMortalityMoveClose(string line)
+	/call IsTank
 	/popup Move close!!!
 	/if (${IsTank})  {  
 		/rsay Move close to reaper !
@@ -452,23 +483,25 @@ Sub Event_ReaperOfMortalityMoveClose(string line)
 
 
 Sub Event_ReaperOfMortalityMoveFar(string line)
+	/call IsTank
 	/popup Run away!!!
 	/if (${IsTank})  {
 		/rsay Move away from reaper !
 		/return
 		} 
 	/varset ReaperFar 1
-	/doevents BackOff
+	/stick off
+	/attack off
 	/moveto loc 37 -34
 	/call WaitUntilNotMoving
 	/if (${Select[${Me.Class.ShortName},MAG,DRU,WIZ,SHM,NEC,ENC]})  {
-		/doevents Assist
 		/return
 		}
 	/call ReaperFarAway
 /return
 
 Sub Event_ReaperOfMortalityUnmoveFar(string line)
+	/call IsTank
 	/popup Run away finished
 	/if (${IsTank})  {
 		/rsay Safe to move !
@@ -482,10 +515,11 @@ Sub Event_ReaperOfMortalityUnmoveFar(string line)
 Sub Event_MoveToReaper
 
  /bc [Event] - Returning to The Reaper of Mortality
-
+	/call IsTank
 	/if (${IsTank})  {
 		/rsay Safe to move back ${Time}
-		/return
+		/delay 20
+		/goto :KillReaper
 		}
 	:MoveToReaper
 	/if (${Spawn[NPC =The Reaper of Mortality].ID} && ${Spawn[NPC =The Reaper of Mortality].Distance} > 12)  {
@@ -494,8 +528,21 @@ Sub Event_MoveToReaper
 		}
     /if (${Spawn[NPC =The Reaper of Mortality].ID}!=NULL && ${Spawn[NPC =The Reaper of Mortality].Distance} > 12) /goto :MoveToReaper
 	/call WaitUntilNotMoving
-	/bc Assist on ${Spawn[NPC =The Reaper of Mortality].ID}
+	:KillReaper
+	/if (${IsTank})  {
+		/call KillReaper
+	} else /if (!${IsTank})  {	
+		/if (${MainAssist.Equal[${Me.CleanName}]})  {
+			/call KillReaper
+		}
+	}
 
+/return
+
+
+Sub KillReaper
+
+/bc Assist ${TankName} on ${Spawn[NPC =The Reaper of Mortality].ID}
 /return
 		
 	
@@ -510,10 +557,11 @@ Sub Event_MoveToReaper
 
 
 Sub Event_DraekonMoveToNpc(string line, string NpcName)
+	/call IsTank
 	/if (${IsTank}) /return
 	/varset DraekonCall 1
-	/doevents BackOff
 	/stick off
+	/attack off
 	/target npc ${NpcName}
 	/delay 3
 	/stick hold
@@ -522,24 +570,24 @@ Sub Event_DraekonMoveToNpc(string line, string NpcName)
 /return
 
 Sub Event_DraekonGoToGrass(string line)
-	
+	/call IsTank
 	/if (${IsTank})  {
 		/rsay Everyone move to grass ${Time}
 		/return
 		}
 	/varset DraekonGrass 1
-	/doevents BackOff
+	/stick off
+	/attack off
 	/moveto loc 335.71 -1582.96
 	/call WaitUntilNotMoving
 	/if (${Select[${Me.Class.ShortName},MAG,DRU,WIZ,SHM,NEC,ENC]})  {
-		/doevents Assist
 		/return
 		}
 	/call DraekonGrass
 /return
 
 Sub Event_DraekonGoToMelee(string line)
-
+	/call IsTank
 	/if (${IsTank})  {
 		/rsay Everyone move to melee range ${Time}
 		/return
@@ -549,11 +597,6 @@ Sub Event_DraekonGoToMelee(string line)
 /return
 
 Sub Event_DraekonSafeFromGrass(string line)
-
-	/if (${IsTank})  {
-		/rsay Safe to move back ${Time}
-		/return
-		}
 	/varset DraekonGrass 0
 	/call Event_MoveToDraekon
 /return
@@ -569,27 +612,45 @@ Sub Event_DraekonVoiceEnd(string Line, string targetName)
 	
 Sub Event_MoveToDraekon
 
- /bc [Event] - Returning to Lord Draekon
-
+	/call IsTank
 	/if (${IsTank})  {
 		/rsay Safe to move back ${Time}
-		/return
-		}
+		/delay 30
+		/goto :MovedtoDraekonNowKill
+	}
 	:MoveToDraekon
 	/if (${Spawn[NPC =Lord Draekon].ID} && ${Spawn[NPC =Lord Draekon].Distance} > 20)  {
 		/moveto id ${Spawn[NPC =Lord Draekon].ID}
 		/delay 5
-		}
+	}
     /if (${Spawn[NPC =Lord Draekon].ID}!=NULL && ${Spawn[NPC =Lord Draekon].Distance} > 20) /goto :MoveToDraekon
 	/call WaitUntilNotMoving
-	/bc Assist on ${Spawn[NPC =Lord Draekon].ID}
-
+	:MovedtoDraekonNowKill
+	/if (${IsTank})  {
+		/rsay Kill Draekon !!!
+		/call KillDraekon
+	} else /if (!${IsTank})  {	
+		/if (${MainAssist.Equal[${Me.CleanName}]})  {
+			/rsay Kill Draekon !!!
+			/call KillDraekon
+		}
+	}
 /return
+
+
+Sub KillDraekon
+/delay 30
+/bc Assist ${TankName} on ${Spawn[NPC =Lord Draekon].ID}
+/return
+
+
 	
 	
 	
-	
-|------------------Seravince---------------Originals by Bazillions--Editited for E3 by Muergan------|	
+|------------------Seravince---------------Originals by Bazillions--Editited for E3 by Muergan------|
+|																									|
+|  ***Start all Characters middle of stairs facing away from him***									|
+|---------------------------------------------------------------------------------------------------|	
 	
 	
 #Event SeravinceAoeStun "Emperor Seravince body goes rigid as he begins to look around at his attackers!"
@@ -600,71 +661,273 @@ Sub Event_MoveToDraekon
 	
 	
 Sub Event_SeravinceAoeStun(string line)
-	/if (${IsTank})  {
-		/rsay Safe to move back ${Time}
-		/return
-		}
+	/call IsTank
 	/varset SeravinceStun 1
 	/popup AoE Stun
-	/backoff
-	/face away
-	/if (${Select[${Me.Class.ShortName},MAG,DRU,WIZ,SHM,NEC,ENC]})  {
-		/doevents Assist
+	/if (${Select[${Me.Class.ShortName},MAG,DRU,WIZ,SHM,NEC,ENC,CLR,DRU,SHM]})  {
 		/return
+	} else /if (${IsTank})  {
+		/rsay Turn Away !!!
 		}
+	/face away
 	/call SeravinceStun
 /return
 
 Sub Event_SeravinceAoeStunComplete(string line)
-	/if (${IsTank})  {
-		/rsay Safe to move back ${Time}
-		/return
-		}
+	/call IsTank
 	/varset SeravinceStun 0
 	/popup AoE Stun Complete
+	/if (${Select[${Me.Class.ShortName},MAG,DRU,WIZ,SHM,NEC,ENC,CLR,DRU,SHM]})  {
+		/return
+		}
 	/face fast
-	/bc Assist on ${Spawn[NPC =Emperor Seravince].ID}
+	/if (${IsTank})  {
+		/rsay Safe to Attack !!!
+		/call KillSeravince
+	} else /if (!${IsTank})  {	
+		/if (${MainAssist.Equal[${Me.CleanName}]})  {
+			/rsay Safe to Attack !!!
+			/call KillSeravince
+		}
+	}
 /return
 
 Sub Event_SeravinceCreatesAdds(string line)
+	/call IsTank
 	/popup Seravince Created Adds
 	/if (${IsTank})  {
-		/rsay Safe to move back ${Time}
+		/rsay Seravince Created Adds
 		/return
-		}
+	}
+	/if (${Me.Class.ShortName.Equal[ENC]})  {
+		/doevents BackOff
+		/pet get lost
+		/moveto loc 2.02 -1030.79
+		/call WaitUntilNotMoving
+		/call SeravinceMez
+	}
 /return
 
 Sub Event_SeravinceCallsAddsToAttack(string line)
+	/call IsTank
 	/popup Seravince Adds Attacking!!!
 	/if (${IsTank})  {
-		/rsay Safe to move back ${Time}
+		/rsay Seravince Adds Attacking!!!
 		/return
 		}
-	/if (!${Defined[MyClass]}) /declare MyClass string outer ${Me.Class}
-	/if (${MyClass.Equal[Enchanter]}) {
-		/delay 50
+	/return	
+		
+Sub SeravinceMez	
+	/if (${Me.Class.ShortName.Equal[ENC]}) {
 		:EnchanterSeravinceLoop
 		/target Advisor Tel`Quka
 		/call MezmerizeTarget
+		/delay 20
 		/target Advisor Vulth`Rak
 		/call MezmerizeTarget
+		/delay 20
 		/target Advisor Zser`Vith
 		/call MezmerizeTarget
+		/delay 20
 		/doevents
 		/if (${SpawnCount[npc "Emperor Seravince"]} > 0) {
 			/goto :EnchanterSeravinceLoop
 		}
 	}
 /return
-	
-	
-	
-	
-	
-	
+
+Sub KillSeravince
+
+/bc Assist ${TankName} on ${Spawn[NPC =Emperor Seravince].ID}
+/return
+
+
 
 	
 	
+|--------------------------Vistrinda-------By Muergan--------------------|
+
+#Event VistrindaEggs "Out of the corner of your eye you see Vistrinda's Eggs begin to wobble as a strange voice enters your mind, 'Free me mortal! Only your words can break this shelled prison!'"	
+#Event VistrindaAddADead "a corrupted caretaker has been slain by #*#!"
+#event VistrindaAddADead "You have slain a corrupted caretaker!"
+#Event VistrindaAddA "A corrupted caretaker hits YOU for #*# points of damage."
+#Event VistrindaAddBDead "A Corrupted Dragorn has been slain by #*#!"
+#event VistrindaAddbDead "You have slain A Corrupted Dragorn!"
+#Event VistrindaAddB "A Corrupted Dragorn hits YOU for #*# points of damage."
+
+
+
+Sub	Event_VistrindaEggs
+
+
+/popup EGGS HAVE SPAWNED !!!!
+/return
+
+
+Sub	Event_VistrindaAddA
+
+/if (${VistrindaAddATimer} == 0)  {
+	/if (${SpawnCount[npc "a corrupted caretaker"]})  {
+		/varset VistrindaAddATimer 1
+	}
+}
+/call IsTank
+/if (${IsTank})  {
+	/rsay Kill a corrupted caretaker!!!
+	/call KillVistrindaAddA
+}
+/if (!${IsTank})  {	
+	/if (${MainAssist.Equal[${Me.CleanName}]})  {
+		/rsay Kill a corrupted caretaker!!!
+		/call KillVistrindaAddA
+	}
+}
+/return
+
+	
+Sub	Event_VistrindaAddADead
+
+/if (${SpawnCount[npc "a corrupted caretaker"]} == 0) {
+	/varset VistrindaAddATimer 0
+	}
+/call IsTank
+/if (${IsTank})  {
+		/if (${IsTank})  {	
+			/call KillVistrinda
+		}
+	/return
+}
+/if (!${IsTank})  {
+	/if (${MainAssist.Equal[${Me.CleanName}]})  {
+		/call KillVistrinda
+	}
+}
+/return
+
+Sub	Event_VistrindaAddB
+
+/if (${VistrindaAddBTimer} == 0)  {
+	/if (${SpawnCount[npc "A Corrupted Dragorn"]})  {
+		/varset VistrindaAddBTimer 1	
+	}
+/call IsTank
+/if (${IsTank})  {
+	/rsay Kill A Corrupted Dragorn!!!
+	/call KillVistrindaAddB
+}
+/if (!${IsTank})  {	
+	/if (${MainAssist.Equal[${Me.CleanName}]})  {
+		/rsay Kill A Corrupted Dragorn!!!
+		/call KillVistrindaAddB
+	}
+}
+/return
+
+	
+Sub	Event_VistrindaAddBDead
+
+/if (${SpawnCount[npc "A Corrupted Dragorn"]} == 0) {
+	/varset VistrindaAddBTimer 0
+	}
+/call IsTank
+/if (${IsTank})  {
+		/if (${IsTank})  {	
+			/call KillVistrinda
+		}
+	/return
+}
+/if (!${IsTank})  {
+	/if (${MainAssist.Equal[${Me.CleanName}]})  {
+		/call KillVistrinda
+	}
+}
+/return
+
+
+	
+Sub KillVistrinda
+/delay 20
+/bc Assist ${TankName} on ${Spawn[NPC =Vistrinda, The Brood Mother].ID}
+/return
+
+
+Sub KillVistrindaAddA
+/delay 20
+/bc Assist ${TankName} on ${Spawn[NPC =a corrupted caretaker].ID}
+/return
+
+Sub KillVistrindaAddB
+/delay 20
+/bc Assist ${TankName} on ${Spawn[NPC =A Corrupted Dragorn].ID}
+/return
+
+
+
+|-----------------------Valik the First Creation----------------By Muergan----|
+|																    		  |
+|      Park all in sight of Valik, hide only clerics behind wall & engage     |
+|-----------------------------------------------------------------------------|
+
+#Event ValikBegin "You feel a sense of coming doom and horror as Valik begins to chant a powerful spell!"	
+#Event ValikEnd "Valik releases his spell causing those within his sight to be flung down the spire in a state of Vertigo!"	
+
+Sub	Event_ValikBegin
+/popup RUN AWAY !!!!
+/varset ValikWait 1
+/call IsTank
+/if (${IsTank} || ${Select[${Me.Class.ShortName},CLR]})  {
+	/if (${IsTank})  {
+		/rsay Run away you Fools!!!
+	}
+	/return
+	}
+/if (!${IsTank})  {	
+	/stick off
+	/attack off
+	/moveto loc 5.71 -60.22
+	/call WaitUntilNotMoving
+	/moveto loc -8.23 -84.46
+	/call WaitUntilNotMoving
+	/call ValikWait
+}
+/RETURN
+
+
+Sub KillValik
+/delay 20
+/bc Assist ${TankName} on ${Spawn[NPC =Valik the First Creation].ID}	
+/return
+
+
+Sub	Event_ValikEnd
+/popup SAFE TO RETURN !!!
+/varset ValikWait 0
+/call IsTank
+/if (${IsTank} || ${Select[${Me.Class.ShortName},CLR]})  {
+		/if (${IsTank})  {			
+			/delay 20
+			/goto :KillValik
+		}
+	/return
+}
+	/moveto loc 5.71 -60.22
+	:KillValik
+/if (${IsTank})  {	
+			/rsay Return to the fight!!!
+			/call KillValik		
+} else /if (!${IsTank})  {	
+	/if (${MainAssist.Equal[${Me.CleanName}]})  {
+		/rsay Return to the fight!!!
+		/call KillValik
+	}
+}
+/return
+
+
+
+
+
+
 	
 
 Sub Thf_Setup
@@ -675,7 +938,11 @@ Sub Thf_Setup
 /declare ReaperDucking int outer 0
 /declare ReaperFar int outer 0
 /declare SeravinceStun int outer 0
-	
+/declare VistrindaAddATimer int outer 0
+/declare VistrindaAddBTimer int outer 0
+/declare IsTank bool outer FALSE
+/declare ValikWait int outer 0	
+/declare TankName string outer NULL
 	
 /if (${Debug}) /echo <== Thf_Setup -|
 /return
@@ -698,6 +965,7 @@ Sub thf_Aliases
 	/squelch /alias /ralloson /bc ralloszek on
 	/squelch /alias /rallosoff /bc ralloszek off
 	/squelch /alias /mezit /bc Mez on ${Target.ID}
+
 
 /if (${Debug} || ${Debug_Thf}) /echo <== thf_Aliases -|
 /return
