@@ -318,6 +318,15 @@ SUB EVENT_attendance(line, ChatSender)
 /return
 
 
+
+
+
+
+
+
+|---------------------------------------Events Section----------------------------------------|
+
+
 |-------------- Rallos Zek Event  -----------------|
 |  Enables Bots to use Blue Rof of Zek             |
 | /ralloson   - Starts Bane Nuking                 |
@@ -926,8 +935,82 @@ Sub	Event_ValikEnd
 
 
 
+|---------------------------------------Events Section End----------------------------------------|
 
 
+
+
+
+
+
+
+
+
+
+|--------------------------Spawn Alerts Section------------------------|
+
+
+
+
+|-------------------------DSK Spawn Alerts----------By Muergan-------------|
+
+#Event Wurliz "Wurliz The Destroyer shouts 'Swift Death comes your way!'"
+
+Sub Event_Wurliz(string line)
+	/popup Wurliz the Destroyer spawned !!!
+	/if (${MainAssist.Equal[${Me.CleanName}]}) {
+		/rsay Wurliz the Destroyer spawned !!!
+	}
+/return
+
+
+|-------------------------HoH Mini Spawn Alerts-----By Muergan-------------|
+
+#Event HoHGurzan "The ground trembles and shakes as Gurzan springs forth from the shadows."
+#Event HoHIkliz "The halls flare with fire as Ikliz begins weaving dark magic."
+#Event HoHCsarth "The walls seem to bend and break as Csarth marches down from his throne."
+#Event HoHEnji "The trees begin to shake with terror as Enji climbs down to the ground."
+#Event HoHCruthz "The winds in the temple pick up and begin to howl as Cruthz awakes from his slumber."
+
+
+
+Sub Event_HoHGurzan(string line)
+	/popup Gurzan the Deathbringer spawned !!!
+	/if (${MainAssist.Equal[${Me.CleanName}]}) {
+		/rsay Gurzan the Deathbringer spawned !!!
+	}
+/return
+
+Sub Event_HoHIkliz(string line)
+	/popup Arch Bishop Ikliz spawned !!!
+	/if (${MainAssist.Equal[${Me.CleanName}]}) {
+		/rsay Arch Bishop Ikliz spawned !!!
+	}
+/return
+
+Sub Event_HoHCsarth(string line)
+	/popup Vision of Emperor Csarth spawned !!!
+	/if (${MainAssist.Equal[${Me.CleanName}]}) {
+		/rsay Vision of Emperor Csarth spawned !!!
+	}
+/return
+
+Sub Event_HoHEnji(string line)
+	/popup Enji Vismen spawned !!!
+	/if (${MainAssist.Equal[${Me.CleanName}]}) {
+		/rsay Enji Vismen spawned !!!
+	}
+/return
+
+Sub Event_HoHCruthz(string line)
+	/popup Duke Cruthz spawned !!!
+	/if (${MainAssist.Equal[${Me.CleanName}]}) {
+		/rsay Duke Cruthz spawned !!!
+	}
+/return
+
+
+|--------------------------Spawn Alerts Section End------------------------|
 	
 
 Sub Thf_Setup
