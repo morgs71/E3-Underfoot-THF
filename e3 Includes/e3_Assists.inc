@@ -1,6 +1,6 @@
 |--------------------------------------------------------------------|
 |- e3_Macro_Assists.inc	( originally designed to work with e3.mac )	-|
-|- Written by Killians of PEQ										-|
+|- Written by Killians of PEQ			edited by Muergan			-|
 |--------------------------------------------------------------------|
 |- Contains assisting related functions for e3.mac.					-|
 |--------------------------------------------------------------------|
@@ -12,6 +12,7 @@
 |--------------------------------------------------------------------------------|
 |- Use, 'Assist on ${Target.ID}' in /tell, /group, or /bc.						-|
 |--------------------------------------------------------------------------------|
+#event Assist "<#*#> Assist #1# on #2#"
 #event Assist "<#1#> Assist on #2#"
 #event Assist "#1# tell your party, 'Assist on #2#'"
 #event Assist "#1# tells the group, 'Assist on #2#'"
@@ -62,7 +63,8 @@ SUB event_Assist(line, ChatSender, int MobID)
 					/varset hasTanked FALSE
 					
 					| If I am the assist caller, or I am feigning, don't allow macro control.
-					/if (${ChatSender.Equal[${Me.CleanName}]} || ${Me.Feigning}) {
+					/call IsTank
+					/if (${ChatSender.Equal[${Me.CleanName}]} || ${Me.Feigning} || ${IsTank}) {
 						/varset AllowControl FALSE
 					} else {
 						/varset AllowControl TRUE
@@ -649,8 +651,8 @@ SUB CombatAbilities
 					}
 				
 				| Use combat ability (discipline)
-				} else /if (${Me.CombatAbility[${abilityName}]}) {
-					/if (!${Me.CombatAbilityReady[${abilityName}]}) {
+				} else /if (${Me.CombatAbility[${abilityName}]})  {
+					/if (!${Me.CombatAbilityReady[${abilityName}]})  {
 						/if (${Debug} || ${Debug_Assists}) /echo Discipline [${abilityName}] is not ready.
 					} else {
 						
@@ -739,8 +741,9 @@ SUB check_Nukes
 /if (${Debug} || ${Debug_Assists}) /echo |- check_Nukes ==>
 
 
-	/if	(${RallosZek} && ${FindItem[Blue Rod of Zek].Timer}==0 && ${Assisting})  {
+	/if	(${RallosZek} && !${BlueRodTimer} && ${Assisting})  {
 		/call e3_Cast ${AssistTarget} "Blue Rod of Zek"
+		/call createTimer BlueRodTimer 5s
 		/popup Rallos Zek Bane Damage is Engaged!
 	} else /if (${MyNukes.Size} && ${Assisting} && ${use_Nukes}) {
 		
@@ -1573,7 +1576,7 @@ Sub assist_Setup
 	/call IniToVar "${genSettings_Ini},Assists,AE Threat Range" AE_Radius int outer
 	/call INItoVar "${genSettings_Ini},Assists,Acceptable Target Types" AcceptableTargetTypes string outer
 	/call INItoVar "${genSettings_Ini},Assists,Auto-Assist (On/Off)" auto_AssistOn bool outer
-	
+	/if (${Ini[${genSettings_Ini},Assists,Main-Assist].Length}) /call IniToVar "${genSettings_Ini},Assists,Main-Assist" MainAssist string outer
 | ------------------------------------- Import Character_Ini Settings.
 
 	| [Melee/Ranged].
@@ -1665,7 +1668,7 @@ SUB assist_MacroSettings
 /if (${Debug} || ${Debug_Assists}) /echo |- assist_MacroSettings ==>
 
 	/call WriteToIni "${advSettings_Ini},Debug,Debug Assists (On/Off)"
-
+	/call WriteToVar "${genSettings_Ini},Assists,Main-Assist"
 	/call WriteToIni "${genSettings_Ini},Assists,Auto-Assist (On/Off)" On
 	/if (${Ini[${genSettings_Ini},Assists,Auto-Assist Engage Percent].Length}) /call WriteToIni "${genSettings_Ini},Assists,Auto-Assist Engage Percent" "DEPRECATED - YOU MAY DELETE THIS ENTRY" 1
 	/call WriteToIni "${genSettings_Ini},Assists,Max Engage Distance" 250
