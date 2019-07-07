@@ -934,6 +934,53 @@ Sub	Event_ValikEnd
 
 
 
+|---------------------------------4th of July--Moarburgerz---------------By Muergan-------------|
+#event MoarburgerzHungry "You see Moarburgerz look around with hunger in his eyes."
+#event MoarburgerzFull "Moarburgerz is no longer in a hunger craze!"
+
+Sub Event_MoarburgerzHungry
+
+/popup Stop Attacking !!!
+/call IsTank
+/if (${IsTank})  {
+	/backoff
+	/call Feedhim
+}
+/return
+
+Sub Feedhim
+
+/declare i int local 1
+/for i 1 to 5
+/if (${FindItem[=Special Hamburger].ID})  {
+	/call e3_Cast ${SpawnCount[npc "Moarburgerz"]}.ID} "Special Hamburger"
+	/delay 5
+}
+/next i
+/return
+
+
+Sub KillMoarburgerz
+
+/target ${SpawnCount[npc "Moarburgerz"]}.ID}
+/bc Assist ${TankName} on ${Spawn[NPC =Moarburgerz].ID}	
+/return
+
+
+Sub Event_MoarburgerzFull
+
+/popup Kill Him!!!
+/call IsTank
+/if (${IsTank})  {	
+			/rsay Return to the fight!!!
+			/call KillMoarburgerz		
+	}
+}
+/return
+
+
+
+
 
 |---------------------------------------Events Section End----------------------------------------|
 
