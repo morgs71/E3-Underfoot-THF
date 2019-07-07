@@ -1748,8 +1748,8 @@ Sub assist_Aliases
 	/squelch /alias /rainOn /bc Rain on
 	/squelch /alias /rainOff /bc Rain off
 	/noparse /squelch /alias /SwarmPets /bc Swarm pets on ${Target.ID}
-	/squelch /alias /QuickBurns /bc Quick burns
-	/squelch /alias /FullBurns /bc Full burns
+	/squelch /alias /quickburn /bc Quick Burn
+	/squelch /alias /fullBurn /bc Full Burn
 	/squelch /alias /pvpOn /bc Toggle PvP ON
 	/squelch /alias /pvpOff /bc Toggle PvP OFF
 	/squelch /alias /TauntOn /bc Toggle Taunt ON
