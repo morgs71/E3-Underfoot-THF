@@ -58,10 +58,12 @@ Sub check_GatherMana
 	} else /if (${Me.PctMana} < 20 && ${FindItemCount[Fire Crystal Wristguard]} && ${FindItem[Fire Crystal Wristguard].Timer}==0)  {
 		/call e3_Cast 0 "Fire Crystal Wristguard" 
 	} else /if (${Me.PctMana} < 30 && ${FindItemCount[Powerful Silk Slippers]} && ${FindItem[Powerful Silk Slippers].Timer}==0)  {
-		/call e3_Cast 0 "Powerful Silk Slippers" 
-	} else /if (${Me.PctMana} < 35 && ${FindItemCount[Silver Chains]} && ${FindItem[Silver Chains].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]})  {
+		/call e3_Cast 0 "Powerful Silk Slippers"
+	} else /if (${Me.PctMana} < 30 && ${FindItemCount[Silver Chains of the Burgerz]} && ${FindItem[Silver Chains of the Burgerz].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]})  {
+		/call e3_Cast 0 "Silver Chains of the Burgerz" 
+	} else /if (${Me.PctMana} < 30 && ${FindItemCount[Silver Chains]} && ${FindItem[Silver Chains].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]})  {
 		/call e3_Cast 0 "Silver Chains" 
-	} else /if (${Me.PctMana} < 40 && ${FindItemCount[Orb of Spirits]} && ${FindItem[Orb of Spirits].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]})  {
+	} else /if (${Me.PctMana} < 40 && ${FindItemCount[Orb of Spirits]} && ${FindItem[Orb of Spirits].Timer}==0)  {
 		/call e3_Cast 0 "Orb of Spirits" 
 	} else /if (${Me.PctMana} < 50 && ${FindItemCount[Tears of Frozen Mana]} && ${FindItem[Tears of Frozen Mana].Timer}==0 &&  !${FindItemCount[Powerful Silk Slippers]})  {
 		/call e3_Cast 0 "Tears of Frozen Mana" 
@@ -760,16 +762,67 @@ Sub KillSeravince
 #Event VistrindaAddADead "a corrupted caretaker has been slain by #*#!"
 #event VistrindaAddADead "You have slain a corrupted caretaker!"
 #Event VistrindaAddA "A corrupted caretaker hits YOU for #*# points of damage."
+#Event VistrindaAddAKill "<#*#> KillAddA"
+#Event VistrindaAddBKill "<#*#> KillAddB"
 #Event VistrindaAddBDead "A Corrupted Dragorn has been slain by #*#!"
-#event VistrindaAddbDead "You have slain A Corrupted Dragorn!"
+#event VistrindaAddBDead "You have slain A Corrupted Dragorn!"
 #Event VistrindaAddB "A Corrupted Dragorn hits YOU for #*# points of damage."
+
+
+Sub EggCheck
+
+:Egg
+/keypress ${CycleTarget}
+/if (${Spawn[NPC =a corrupted caretaker].ID})  {
+	:goto Egg
+} else /if (${Spawn[NPC =A Corrupted Dragorn].ID})  {
+	:goto Egg
+} else /if (${Spawn[NPC =Vistrinda, The Brood Mother].ID})  {
+	:goto Egg
+} else /if (${Spawn[NPC =Faithful Dragorn].ID})  {
+	:goto Egg
+   } 
+/return
+
+
+Sub EggTrigger
+
+/declare i   int local 1
+/for i 1 to 3
+/say you are free
+/if (!${Target.ID}) /return
+/delay 1
+/next i
+/return
 
 
 
 Sub	Event_VistrindaEggs
 
-
 /popup EGGS HAVE SPAWNED !!!!
+/if (${Select[${Me.Class.ShortName},MAG,WIZ,NEC,ENC]})  {
+	/declare originalLoc string local ${Me.Loc.Replace[ ,]}
+	/doevents BackOff
+	/moveto loc 722.02 1562.18
+	/call WaitUntilNotMoving
+	/call EggCheck
+	/call EggTrigger
+	/moveto loc 614.88 1486.32
+	/call WaitUntilNotMoving
+	/call EggCheck
+	/call EggTrigger
+	/moveto loc 722.64 1482.72
+	/call WaitUntilNotMoving
+	/call EggCheck
+	/call EggTrigger
+	/moveto loc 615.39 1562.00
+	/call WaitUntilNotMoving
+	/call EggCheck
+	/call EggTrigger
+	/call MoveTo -Loc|${originalLoc}
+	/call WaitUntilNotMoving
+	/call KillVistrinda
+}
 /return
 
 
@@ -778,8 +831,15 @@ Sub	Event_VistrindaAddA
 /if (${VistrindaAddATimer} == 0)  {
 	/if (${SpawnCount[npc "a corrupted caretaker"]})  {
 		/varset VistrindaAddATimer 1
+		/bc KillAddA
 	}
 }
+
+/return
+
+
+Sub	Event_VistrindaAddAKill
+
 /call IsTank
 /if (${IsTank})  {
 	/rsay Kill a corrupted caretaker!!!
@@ -792,7 +852,6 @@ Sub	Event_VistrindaAddA
 	}
 }
 /return
-
 	
 Sub	Event_VistrindaAddADead
 
@@ -817,8 +876,16 @@ Sub	Event_VistrindaAddB
 
 /if (${VistrindaAddBTimer} == 0)  {
 	/if (${SpawnCount[npc "A Corrupted Dragorn"]})  {
-		/varset VistrindaAddBTimer 1	
+		/varset VistrindaAddBTimer 1
+		/bc KillAddB		
 	}
+}
+
+/return
+
+
+Sub	Event_VistrindaAddBKill
+
 /call IsTank
 /if (${IsTank})  {
 	/rsay Kill A Corrupted Dragorn!!!
@@ -831,6 +898,7 @@ Sub	Event_VistrindaAddB
 	}
 }
 /return
+
 
 	
 Sub	Event_VistrindaAddBDead
@@ -855,18 +923,18 @@ Sub	Event_VistrindaAddBDead
 
 	
 Sub KillVistrinda
-/delay 20
+/delay 10
 /bc Assist ${TankName} on ${Spawn[NPC =Vistrinda, The Brood Mother].ID}
 /return
 
 
 Sub KillVistrindaAddA
-/delay 20
+/delay 10
 /bc Assist ${TankName} on ${Spawn[NPC =a corrupted caretaker].ID}
 /return
 
 Sub KillVistrindaAddB
-/delay 20
+/delay 10
 /bc Assist ${TankName} on ${Spawn[NPC =A Corrupted Dragorn].ID}
 /return
 
@@ -934,6 +1002,7 @@ Sub	Event_ValikEnd
 
 
 
+
 |---------------------------------4th of July--Moarburgerz---------------By Muergan-------------|
 #event MoarburgerzHungry "You see Moarburgerz look around with hunger in his eyes."
 #event MoarburgerzFull "Moarburgerz is no longer in a hunger craze!"
@@ -977,9 +1046,6 @@ Sub Event_MoarburgerzFull
 	}
 }
 /return
-
-
-
 
 
 |---------------------------------------Events Section End----------------------------------------|
@@ -1073,6 +1139,8 @@ Sub Thf_Setup
 /declare IsTank bool outer FALSE
 /declare ValikWait int outer 0	
 /declare TankName string outer NULL
+
+/if (${Ini[${genSettings_Ini},General,CycleNearestTarget-Hotbutton].Length}) /call IniToVar "${genSettings_Ini},General,CycleNearestTarget-Hotbutton" CycleTarget string outer
 	
 /if (${Debug}) /echo <== Thf_Setup -|
 /return
@@ -1100,7 +1168,12 @@ Sub thf_Aliases
 /if (${Debug} || ${Debug_Thf}) /echo <== thf_Aliases -|
 /return
 
-SUB THF_CharacterSettings
+SUB Thf_MacroSettings
+
+/call WriteToVar "${genSettings_Ini},General,CycleNearestTarget-Hotbutton" F8
+
+
+SUB Thf_CharacterSettings
 /if (${Debug}) /echo |- THF_CharacterSettings ==>
 
 	
