@@ -28,7 +28,7 @@ SUB EVENT_saveMelody(line, ChatSender, melodyName, songsToSave)
 		| Check if the melody already exists, and should not be overwritten.
 		/if (${Ini[${Character_Ini},${melodyName} Melody].Length}) {	
 			/if (${Debug}) /echo |- EVENT_saveMelody -| Overwriting [${melodyName}] melody...
-			/for i 1 to 5
+			/for i 1 to 6
 				/if (${Ini[${Character_Ini},${melodyName} Melody,Song#${i}].Length}) /call WriteToIni "${Character_Ini},${melodyName} Melody,Song#${i}" *PLACEHOLDER 1
 			/next i
 		}
@@ -42,7 +42,7 @@ SUB EVENT_saveMelody(line, ChatSender, melodyName, songsToSave)
 		| If the gem number is not recognized
 		/if (!${Int[${songsToSave.Arg[${i}, ]}]} || ${Int[${songsToSave.Arg[${i}, ]}]} < 1 || ${Int[${songsToSave.Arg[${i}, ]}]} > 9) {
 			/if (${songsToSave.Arg[${i}, ].NotEqual[-Overwrite]}) {
-				/echo [${songsToSave.Arg[${i}, ]}] is not a valid gem number.  Please use the following syntax when saving melodies, "Save Melody [NAME] [# # # # #] (-Overwrite)".  Ex.  /echo Save Melody Raid 1 2 3 4 5 -Overwrite
+				/echo [${songsToSave.Arg[${i}, ]}] is not a valid gem number.  Please use the following syntax when saving melodies, "Save Melody [NAME] [# # # # #] (-Overwrite)".  Ex.  /echo Save Melody Raid 1 2 3 4 5 6 -Overwrite
 			}
 		} else {
 			/echo Song#${i}=${Me.Gem[${songsToSave.Arg[${i}, ]}]}/gem|${songsToSave.Arg[${i}, ]}
@@ -93,8 +93,8 @@ SUB EVENT_startMelody(line, ChatSender, melodyName)
 				/declare spellName string local
 				/declare i int local
 				
-				| For 1 to 5 (maximum melody size)
-				/for i 1 to 5
+				| For 1 to 6 (maximum melody size)
+				/for i 1 to 6
 				
 				/if (${Ini[${Character_Ini},${melodyName} Melody,Song#${i}].Length} && ${Ini[${Character_Ini},${melodyName} Melody,Song#${i}].NotEqual[PLACEHOLDER]}) {
 					
@@ -135,17 +135,13 @@ SUB EVENT_startMelody(line, ChatSender, melodyName)
 /if (${Debug}) /echo <== EVENT_startMelody -|
 /return
 
-
-
 SUB restart_Melody
 /if (${Debug}) /echo |- check_Melody ==>
 
 	/if (!${Me.Casting.ID}) /twist ${Twist.List}
 
 /if (${Debug}) /echo <== check_Melody -|
-/RETURN
-
-
+/return
 
 Sub BRD_Setup
 /if (${Debug}) /echo |- BRD_Setup ==>
@@ -154,8 +150,10 @@ Sub BRD_Setup
 	
 	/if (!${Defined[playingMelody]}) /declare playingMelody bool global
 	/if (!${Defined[songSet]}) /declare songSet string global
+	/if (!${Defined[queueSelo]}) /declare queueSelo bool global
 	
 	/call InitoVar "${Character_Ini},Bard,Auto-Melody" autoMelody string outer
+	/call InitoVar "${Character_Ini},Bard,Auto-Selo (On/Off)" autoSelo bool outer
 	
 	| Start Auto-Melody at start-up.  Currently disabled to check auto start in check_Zone sub.
 	| /if (${Defined[autoMelody]} && !${songSet.Length}) /startmelody ${autoMelody} /only|ME
@@ -163,22 +161,36 @@ Sub BRD_Setup
 /if (${Debug}) /echo <== BRD_Setup -|
 /return
 
-
-
 Sub BRD_Background_Events
+
+	/if (${autoSelo} && !${Me.Buff[Selo`s Accelerating Chorus].ID}) {
+		/varset queueSelo TRUE
+		/if (${Twist.Twisting}) {
+			/twist stop
+			/delay 3
+		}
+		/call e3_Cast ${Me.ID} "Selo`s Accelerating Chorus"
+		/delay 30
+		/stopcast
+	}
+	
+	/if (${queueSelo} && ${Me.Buff[Selo`s Accelerating Chorus].ID}) {
+		/varset queueSelo FALSE
+		/if (!${playingMelody} && !${Twist.Twisting}) {
+			/doevents startMelody
+		}
+	}
 	
 	/doevents saveMelody
 	/doevents startMelody
 	
 	| Check melody
-	/if (${playingMelody} && !${Twist.Twisting} && !${Bool[${Me.Casting}]}) /call restart_Melody
+	/if (${playingMelody} && !${Twist.Twisting} && !${Bool[${Me.Casting}]} && !${queueSelo}) /call restart_Melody
 	
 	| Check Auto-Melody
 	| The call for Auto-Melody is located in e3 Background.inc -> check_Zone.  This is so Auto-Melody will only be checked when you zone, or load the macro.
 
 /return
-
-
 
 SUB BRD_MacroSettings
 /if (${Debug}) /echo |- BRD_MacroSettings ==>
@@ -189,25 +201,22 @@ SUB BRD_MacroSettings
 	/call WriteToIni "${advSettings_Ini},BRD Functions,BRD Function#3" "check_Buffs" 1
 
 /if (${Debug}) /echo <== BRD_MacroSettings -|
-/RETURN
-
-
+/return
 
 SUB BRD_CharacterSettings
 /if (${Debug}) /echo |- BRD_CharacterSettings ==>
 
 	/call WriteToIni "${Character_Ini},Bard,Auto-Melody"
+	/call WriteToIni "${Character_Ini},${Me.Class},Auto-Selo (On/Off)" On
 
 /if (${Debug}) /echo <== BRD_CharacterSettings -|
-/RETURN
-
-
+/return
 
 Sub BRD_Aliases
 /if (${Debug}) /echo |- BRD_Aliases ==>
 
 	/squelch /alias /SaveMelody /echo Save Melody
-	/squelch /alias /PlayMelody /bc  Melody
+	/squelch /alias /PlayMelody /bc Melody
 
 /if (${Debug}) /echo <== BRD_Aliases -|
 /return
