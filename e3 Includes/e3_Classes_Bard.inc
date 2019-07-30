@@ -154,6 +154,7 @@ Sub BRD_Setup
 	
 	/call InitoVar "${Character_Ini},Bard,Auto-Melody" autoMelody string outer
 	/call InitoVar "${Character_Ini},Bard,Auto-Selo (On/Off)" autoSelo bool outer
+	/call InitoVar "${Character_Ini},${Me.Class},Selo Song/Item" selosong string outer
 	
 	| Start Auto-Melody at start-up.  Currently disabled to check auto start in check_Zone sub.
 	| /if (${Defined[autoMelody]} && !${songSet.Length}) /startmelody ${autoMelody} /only|ME
@@ -163,18 +164,18 @@ Sub BRD_Setup
 
 Sub BRD_Background_Events
 
-	/if (${autoSelo} && !${Me.Buff[Selo`s Accelerating Chorus].ID}) {
+	/if (${autoSelo} && !${Me.Buff[${selosong}].ID}) {
 		/varset queueSelo TRUE
 		/if (${Twist.Twisting}) {
 			/twist stop
 			/delay 3
 		}
-		/call e3_Cast ${Me.ID} "Selo`s Accelerating Chorus"
+		/call e3_Cast ${Me.ID} "${selosong}"
 		/delay 30
 		/stopcast
 	}
 	
-	/if (${queueSelo} && ${Me.Buff[Selo`s Accelerating Chorus].ID}) {
+	/if (${queueSelo} && ${Me.Buff[${selosong}].ID}) {
 		/varset queueSelo FALSE
 		/if (!${playingMelody} && !${Twist.Twisting}) {
 			/doevents startMelody
@@ -208,6 +209,7 @@ SUB BRD_CharacterSettings
 
 	/call WriteToIni "${Character_Ini},Bard,Auto-Melody"
 	/call WriteToIni "${Character_Ini},${Me.Class},Auto-Selo (On/Off)" On
+	/call WriteToIni "${Character_Ini},${Me.Class},Selo Song/Item" 
 
 /if (${Debug}) /echo <== BRD_CharacterSettings -|
 /return
