@@ -147,6 +147,7 @@ Sub BRD_Setup
 /if (${Debug}) /echo |- BRD_Setup ==>
 
 	/declare returnTwist bool outer 0
+	/declare selooutdoors bool outer TRUE
 	
 	/if (!${Defined[playingMelody]}) /declare playingMelody bool global
 	/if (!${Defined[songSet]}) /declare songSet string global
@@ -164,13 +165,16 @@ Sub BRD_Setup
 
 Sub BRD_Background_Events
 
-	/if (${autoSelo} && !${Me.Buff[${selosong}].ID}) {
+	/if (${autoSelo} && ${selooutdoors} && !${Me.Buff[${selosong}].ID}) {
 		/varset queueSelo TRUE
 		/if (${Twist.Twisting}) {
 			/twist stop
 			/delay 3
 		}
 		/call e3_Cast ${Me.ID} "${selosong}"
+		/if (${Select[${castReturn},OUTDOORS]}) { 
+			/varset selooutdoors FALSE
+			}
 		/delay 30
 		/stopcast
 	}

@@ -40,6 +40,7 @@ SUB check_Zone
 	
 	| Reset Variables
 	/varset RallosZek False
+	/varset selooutdoors TRUE
 
 /if (${Debug} || ${Debug_Background}) /echo <== check_Zone -|
 /RETURN
