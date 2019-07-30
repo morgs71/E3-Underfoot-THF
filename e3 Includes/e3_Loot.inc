@@ -190,7 +190,7 @@ SUB loot_It(int corpseID)
 						/if (${InvSlot[loot${i}].Item.ID}) /varset linkList ${linkList}${LinkDB[=${InvSlot[loot${i}].Item.Name}]}, 
 					/next i
 					
-					/docommand ${linkChannel} ${linkList.Left[${Math.Calc[${linkList.Length} - 1].Int}]}
+					/docommand ${linkChannel} ${linkList.Left[${Math.Calc[${linkList.Length} - 1].Int}]} on CorpseID: ${corpseID}
 
 				} else {
 					/notify LootWND LW_BroadcastButton leftmouseup
@@ -228,6 +228,7 @@ SUB get_lootSetting(invSlot, itemSlot)
 		| Reset itemName if it contains a ':'.  ':'s cause errors when reading from the ini, because they act as a delimiter, just like '='s
 		/varset itemName ${InvSlot[${invSlot}].Item.Name}
 		/if (${itemName.Find[:]}) /varset itemName ${itemName.Replace[:,;]}
+		/if (${itemName.Find[,]}) /varset itemName ${itemName.Arg[1,,]};${itemName.Arg[2,,]}
 		
 		| Set item value
 		/varset itemValue ${InvSlot[${invSlot}].Item.Value}
@@ -253,6 +254,7 @@ SUB get_lootSetting(invSlot, itemSlot)
 		| Reset itemName if it contains a ':'.  ':'s cause errors when reading from the ini, because they act as a delimiter, just like '='s
 		/varset itemName ${Me.Inventory[${invSlot}].Item[${itemSlot}].Name}
 		/if (${itemName.Find[:]}) /varset itemName ${itemName.Replace[:,;]}
+		/if (${itemName.Find[,]}) /varset itemName ${itemName.Arg[1,,]};${itemName.Arg[2,,]}
 		
 		| Set item value
 		/varset itemValue ${Me.Inventory[${invSlot}].Item[${itemSlot}].Value}
@@ -357,6 +359,7 @@ SUB EVENT_checkLootSetting(line, itemName)
 
 	/declare itemToCheck string local ${itemName}
 	/if (${itemToCheck.Find[:]}) /varset itemToCheck ${itemToCheck.Replace[:,;]}
+	/if (${itemToCheck.Find[,]}) /varset itemToCheck ${itemName.Arg[1,,]};${itemName.Arg[2,,]}
 
 	/declare i int local 1
 	
@@ -390,6 +393,7 @@ SUB EVENT_updateLootSetting(line, ChatSender, itemName, iniSetting)
 	
 		/declare itemToCheck string local ${itemName}
 		/if (${itemToCheck.Find[:]}) /varset itemToCheck ${itemToCheck.Replace[:,;]}
+		/if (${itemToCheck.Find[,]}) /varset itemToCheck ${itemName.Arg[1,,]};${itemName.Arg[2,,]}
 	
 		/declare i int local 1
 		

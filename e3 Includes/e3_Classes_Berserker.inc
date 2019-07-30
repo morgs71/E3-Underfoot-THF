@@ -1,20 +1,20 @@
-|------------------------------------------------------------------------|
-|- e3_Classes_CLR.inc v3.0 ( originally designed to work with e3.mac )	-|
-|- Written by Killians of PEQ											-|
-|------------------------------------------------------------------------|
-|- Contains CLR specific functions related to,							-|
-|-		Setup and Ini entry information									-|
-|-		MainLoop, and AssistLoop hooks									-|
-|-		Over-all functionality / flow									-|
-|------------------------------------------------------------------------|
+|--------------------------------------------------------------------------------|
+|- e3_Classes_Berserker.inc v3.0 ( originally designed to work with e3.mac )	-|
+|- Written by Killians of PEQ											        -|
+|--------------------------------------------------------------------------------|
+|- Contains BER specific functions related to,							        -|
+|-		Setup and Ini entry information									        -|
+|-		MainLoop, and AssistLoop hooks									        -|
+|-		Over-all functionality / flow									        -|
+|--------------------------------------------------------------------------------|
 
 
 
 Sub BER_Setup
 /if (${Debug}) /echo |- BER_Setup ==>
 
-/call IniToVar "${Character_Ini},Beserker,Cry Havoc (On/Off)" CryHavoc bool outer
-/call IniToVar "${Character_Ini},Beserker,Band of the Gargoyle-Cold Rage IV (On/Off)" ZerkGargoyle bool outer
+/call IniToVar "${Character_Ini},Berserker,Cry Havoc (On/Off)" CryHavoc bool outer
+/call IniToVar "${Character_Ini},Berserker,Band of the Gargoyle-Cold Rage IV (On/Off)" ZerkGargoyle bool outer
 
 /if (${Debug}) /echo <== BER_Setup -|
 /return
