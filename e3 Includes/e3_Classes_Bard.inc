@@ -172,9 +172,10 @@ Sub BRD_Background_Events
 			/delay 3
 		}
 		/call e3_Cast ${Me.ID} "${selosong}"
-		/if (${Select[${castReturn},OUTDOORS]}) { 
+		/if (${Select[${castReturn},OUTDOORS]}) {
 			/varset selooutdoors FALSE
-			}
+			/varset queueSelo FALSE
+		}
 		/delay 30
 		/stopcast
 	}
