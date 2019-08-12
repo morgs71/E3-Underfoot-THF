@@ -129,7 +129,14 @@ SUB AquireFollow
 					| If the FollowTarget is a NetBot, engage MQ2NetAdvPath.
 					/if (${Spawn[id ${followTargetID}].LineOfSight}) {
 						/call TrueTarget ${followTargetID}
-						/squelch /netfollow on
+						| If I am a caster, or a Ranger on ranged assist and stack is off.
+						/if (${Me.Class.ShortName.Equal[RNG]} && ${AssistType.Equal[Ranged]} && !${Stack}) {
+							/squelch /netfollow on ${RangedStickDistance}
+						} else /if (${Select[${Me.Class.ShortName},DRU,SHM,MAG,NEC,WIZ,ENC]} && !${Stack}) {
+							/squelch /netfollow on 30
+						} else {
+							/squelch /netfollow on 15
+						}
 					} else /if (${NetAdvPath.State}==2) {
 						/squelch /netfollow unpause
 					}
@@ -140,7 +147,14 @@ SUB AquireFollow
 					|---------------------------------------------------Check LoS
 					/if (${Spawn[id ${followTargetID}].LineOfSight}) {
 						/call TrueTarget ${followTargetID}
-						/squelch /stick hold 20 uw
+						| If I am a caster, or a Ranger on ranged assist and stack is off.
+						/if (${Me.Class.ShortName.Equal[RNG]} && ${AssistType.Equal[Ranged]} && !${Stack}) {
+							/squelch /stick hold ${RangedStickDistance} uw
+						} else /if (${Select[${Me.Class.ShortName},DRU,SHM,MAG,NEC,WIZ,ENC]} && !${Stack}) {
+							/squelch /stick hold 30 uw
+						} else {
+							/squelch /stick hold 20 uw
+						}
 					}
 				}
 
@@ -164,7 +178,46 @@ SUB AquireFollow
 **|
 /RETURN
 
+|--------------------------------------------------------------------------------|
+|- Stacks follow distance on bots who are in the same zone as the ChatSender.   -|
+|--------------------------------------------------------------------------------|
+|- Use, /stack                                                                  -|
+|--------------------------------------------------------------------------------|
+#EVENT Stack "<#1#> Stack"
+SUB Event_Stack(line, ChatSender)
+/if (${Debug} || ${Debug_Basics}) /echo |- Stack ==>
+	
+	/call verifyEvent "${ChatSender}" "${line}"
+	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
+	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|
+	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
+		/varset Stack TRUE
+		/call AquireFollow
+	}
+	
+/if (${Debug} || ${Debug_Basics}) /echo <== Stack -|
+/RETURN
 
+|----------------------------------------------------------------------------------------------------|
+|- Makes casters follow slightly behind melee on bots who are in the same zone as the ChatSender.   -|
+|- Also makes rangers who are on ranged assist follow at their ranged assist distance.              -|
+|----------------------------------------------------------------------------------------------------|
+|- Use, /unstack                                                                                    -|
+|----------------------------------------------------------------------------------------------------|
+#EVENT Unstack "<#1#> Unstack"
+SUB Event_Unstack(line, ChatSender)
+/if (${Debug} || ${Debug_Basics}) /echo |- Unstack ==>
+
+	/call verifyEvent "${ChatSender}" "${line}"
+	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
+	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|
+	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
+		/varset Stack FALSE
+		/call AquireFollow
+	}
+	
+/if (${Debug} || ${Debug_Basics}) /echo <== Unstack -|
+/RETURN
 
 |----------------------------------------------------------------------------|
 |- Disengages follow on bots who are in the same zone as the ChatSender.	-|
@@ -328,7 +381,6 @@ SUB EVENT_bark(line, ChatSender, msgTarget, barkMsg)
 		
 		/if (${Stick.Active}) /squelch /stick off
 		/if (${NetAdvPath.State}==1) /squelch /netfollow off
-		/if (${Me.Casting.ID} && ${Me.Class.ShortName.NotEqual[BRD]}) /delay 300 !${Me.Casting.ID}
 		
 		:retry_Bark
 		/if (${Debug} && !${spamTimer_retryBark}) {
@@ -338,6 +390,13 @@ SUB EVENT_bark(line, ChatSender, msgTarget, barkMsg)
 		
 		| -Target the msgTarget
 		/call TrueTarget ${msgTarget}
+		
+		/if (!${Target.LineOfSight}) {
+			/if (${Debug} || ${Debug_Basics}) /echo Target is not in line of sight.
+			/goto :end_Bark
+		}
+		
+		/interrupt
 		/if (${Target.Distance} > 10) {
 			/call MoveTo -Loc|${Target.Y},${Target.X}
 			/if (${retryTimer}) {
@@ -348,7 +407,7 @@ SUB EVENT_bark(line, ChatSender, msgTarget, barkMsg)
 		} else {
 		
 			| -Wait a moment, then bark the message.
-			/delay ${Math.Rand[30]}
+			/delay 15
 			
 			/varset startingLoc ${Me.Loc.Replace[ ,]}
 			
@@ -360,6 +419,7 @@ SUB EVENT_bark(line, ChatSender, msgTarget, barkMsg)
 			/if (${Me.Class.ShortName.Equal["ROG"]} && ${Me.Invis}) {
 				/doability Hide
 				}
+			/interrupt
 			/say ${barkMsg}
 			
 			| -Wait up to 3 seconds for something to happen.
@@ -387,6 +447,7 @@ SUB EVENT_bark(line, ChatSender, msgTarget, barkMsg)
 				}
 			}
 		}
+		:end_Bark
 		/deletevar barkTarget
 		/deletevar barkReturned
 	}
@@ -1431,6 +1492,8 @@ SUB EVENT_Evacuate(line, ChatSender)
 			/call e3_Cast ${Me.ID} "Exodus" alt
 		} else /if (${Me.Book[${Evac_Spell.Arg[1,/]}]}) {
 			/docommand ${ChatToggle} Evacuating!
+			/if (${NetAdvPath.State}) /squelch /netfollow off
+			/interrupt
 			/call e3_Cast ${Me.ID} "${Evac_Spell.Arg[1,/]}/GiveUpTimer|30s"
 		} else {
 			/docommand ${ChatToggle} I am not able to Evac at this time.
@@ -1786,6 +1849,7 @@ Sub basics_Setup
 	/if (!${Defined[Following]}) /declare Following bool global FALSE
 	/if (!${Defined[FollowTarget]}) /declare FollowTarget string global NULL
 	/if (!${Defined[Followers]}) /declare Followers string global NULL
+	/if (!${Defined[Stack]}) /declare Stack bool global TRUE
 
 	/if (!${Defined[consentTargets]}) /declare consentTargets string global ${Me.CleanName}
 
@@ -1940,6 +2004,8 @@ Sub basics_Aliases
 	/squelch /alias /ResetCorpses /bc Fix Corpses
 	/squelch /alias /gathercorpses /echo Gather Corpses
 	/squelch /alias /mana /bc Report Mana
+	/squelch /alias /Stack /bc Stack
+	/squelch /alias /Unstack /bc Unstack
 
 /if (${Debug} || ${Debug_Basics}) /echo <== basics_Aliases -|
 /return
