@@ -1170,7 +1170,7 @@ Sub thf_Aliases
 
 SUB Thf_MacroSettings
 
-/call WriteToVar "${genSettings_Ini},General,CycleNearestTarget-Hotbutton" F8
+/call WriteToIni "${genSettings_Ini},General,CycleNearestTarget-Hotbutton" F8
 
 
 SUB Thf_CharacterSettings

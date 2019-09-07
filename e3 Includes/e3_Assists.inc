@@ -1668,7 +1668,7 @@ SUB assist_MacroSettings
 /if (${Debug} || ${Debug_Assists}) /echo |- assist_MacroSettings ==>
 
 	/call WriteToIni "${advSettings_Ini},Debug,Debug Assists (On/Off)"
-	/call WriteToVar "${genSettings_Ini},Assists,Main-Assist"
+	/call WriteToIni "${genSettings_Ini},Assists,Main-Assist"
 	/call WriteToIni "${genSettings_Ini},Assists,Auto-Assist (On/Off)" On
 	/if (${Ini[${genSettings_Ini},Assists,Auto-Assist Engage Percent].Length}) /call WriteToIni "${genSettings_Ini},Assists,Auto-Assist Engage Percent" "DEPRECATED - YOU MAY DELETE THIS ENTRY" 1
 	/call WriteToIni "${genSettings_Ini},Assists,Max Engage Distance" 250
