@@ -1172,6 +1172,7 @@ SUB Thf_MacroSettings
 
 /call WriteToIni "${genSettings_Ini},General,CycleNearestTarget-Hotbutton" F8
 
+/return
 
 SUB Thf_CharacterSettings
 /if (${Debug}) /echo |- THF_CharacterSettings ==>
