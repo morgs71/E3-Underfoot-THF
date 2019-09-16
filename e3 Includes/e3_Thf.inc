@@ -1048,6 +1048,96 @@ Sub Event_MoarburgerzFull
 /return
 
 
+
+|-------------------------------Creeping Doom Cures--------------------------------|
+
+
+#Event CreepingDoom "#1# feels death call their name."
+#Event CreepingDoomCure "#1# tells the raid, 'Cure Creeping Doom'"
+
+Sub Event_CreepingDoom (string line, string Infected)
+
+/call IsTank
+/if (${Me.Name.Equal[${Infected}]} && ${Select[${Me.Class.ShortName},DRU,SHM,PAL]} && !${IsTank})  {
+	:RGCloopa
+	/if (${Me.Buff[Creeping Doom].ID})  {
+		/call e3_Cast ${Me.ID} "Remove Greater Curse"
+		/delay 60
+		/goto RGCloopa
+	}
+	/return
+} else /if (${Me.Name.Equal[${Infected}]} && ${IsTank})  {
+	/rsay Cure Creeping Doom
+	/return
+} else /if (${Me.Name.Equal[${Infected}]} && !${IsTank})  {
+	/call RGCitemChk
+	/if (${Me.Buff[Creeping Doom].ID})  {
+		/rsay Cure Creeping Doom
+	}
+}
+/return
+
+
+Sub RGCitemChk
+
+:RGCloopb
+/if (${Me.Buff[Creeping Doom].ID})  {
+	/if (${FindItem[=Shissar Empire Badge of Honor].ID})  {
+		/call e3_Cast ${Me.ID} "Shissar Empire Badge of Honor"
+		/delay 50
+		/goto RGCloopb
+	} else /if (${FindItem[=Frosted Blackflame Sphere].ID})  {
+		/call e3_Cast ${Me.ID} "Frosted Blackflame Sphere" 
+		/delay 65
+		/goto RGCloopb
+	} else /if (${FindItem[=Blackflame Sphere].ID})  {
+		/call e3_Cast ${Me.ID} Blackflame Sphere" 
+		/delay 75
+		/goto RGCloopb
+	} else /if (${FindItem[=Shale Shoulderpads of Order].ID})  {
+		/call e3_Cast ${Me.ID} "Shale Shoulderpads of Order" 
+		/delay 80
+		/goto RGCloopb
+	}
+}	
+/return
+
+
+Sub Event_CreepingDoomCure (string line, string ChatSender)
+
+| -Verify the event
+		/call verifyEvent "${ChatSender}" "${line}"
+		/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
+		|    |-----------Valid User----------|
+		/if (!${Bool[${Macro.Return.Arg[2,_]}]}) {
+
+			/call IniToVar "${genSettings_Ini},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
+			
+			| If the user is not valid, check allow_BuffRequests
+			/if (${Macro.Return}) {
+		
+				| If allow_BuffRequests=TRUE, check restricked PCs
+				/if (!${Select[${ChatSender},${Ini[${Macro_Ini},Buff Requests,Restricted PCs]}]}) /goto :allowAccess
+			}
+		} else {
+		
+			:allowAccess
+			
+			/call IsTank
+			/if (${Select[${Me.Class.ShortName},DRU,SHM,PAL]} && !${IsTank})  {
+				:RGCloopc
+				/target ${ChatSender}
+				/if (${Target.Buff[Creeping Doom].ID})  {
+					/call e3_Cast ${ChatSender} "Remove Greater Curse"
+					/delay 60
+					/goto RGCloopc
+	}
+/return			
+			
+			
+			
+
+
 |---------------------------------------Events Section End----------------------------------------|
 
 
